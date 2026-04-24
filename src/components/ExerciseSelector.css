@@ -1,0 +1,148 @@
+/* ============================================
+   Exercise Selector - Orange & White Theme
+   ============================================ */
+
+.exercise-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.exercise-selector__title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  padding-left: 4px;
+}
+
+.exercise-selector__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.exercise-selector__btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+}
+
+.exercise-selector__btn:hover {
+  background: var(--orange-50);
+  border-color: var(--orange-500);
+  color: var(--text-primary);
+}
+
+.exercise-selector__btn--active {
+  background: var(--orange-100);
+  border-color: var(--orange-500);
+  color: var(--text-primary);
+  box-shadow: 0 0 16px rgba(255, 107, 0, 0.12);
+}
+
+.exercise-selector__icon {
+  font-size: 1.2rem;
+}
+
+.exercise-selector__name {
+  flex: 1;
+  text-align: left;
+  font-weight: 600;
+}
+
+.exercise-selector__key {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+}
+
+.exercise-selector__btn--active .exercise-selector__key {
+  background: rgba(255, 107, 0, 0.15);
+  color: var(--orange-500);
+}
+
+.exercise-selector__btn--deselect {
+  border-color: rgba(239, 68, 68, 0.2);
+  color: var(--text-muted);
+}
+
+.exercise-selector__btn--deselect:hover {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: var(--red);
+}
+
+/* Mobile: horizontal exercise buttons */
+@media (max-width: 1024px) {
+  .exercise-selector {
+    gap: 6px;
+  }
+
+  .exercise-selector__list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .exercise-selector__btn {
+    padding: 8px 6px;
+    justify-content: center;
+    text-align: center;
+    gap: 5px;
+    min-width: 0;
+  }
+
+  .exercise-selector__btn--deselect {
+    grid-column: 1 / -1;
+  }
+
+  .exercise-selector__name {
+    flex: none;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .exercise-selector__key {
+    display: none;
+  }
+
+  .exercise-selector__title {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .exercise-selector__list {
+    gap: 6px;
+  }
+
+  .exercise-selector__btn {
+    padding: 6px 4px;
+    font-size: 0.75rem;
+  }
+
+  .exercise-selector__icon {
+    font-size: 1rem;
+  }
+
+  .exercise-selector__name {
+    font-size: 0.65rem;
+  }
+}

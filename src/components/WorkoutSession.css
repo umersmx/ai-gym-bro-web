@@ -1,0 +1,366 @@
+/* ============================================
+   Workout Session - Orange & White Theme
+   ============================================ */
+
+.workout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+/* Top Bar */
+.workout__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+.workout__back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.workout__back-btn:hover {
+  background: var(--orange-50);
+  color: var(--orange-500);
+  border-color: var(--orange-500);
+}
+
+.workout__topbar-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.workout__status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--orange);
+  transition: background var(--transition);
+}
+
+.workout__status-dot--active {
+  background: var(--green);
+  box-shadow: 0 0 10px var(--green);
+  animation: pulse-glow-green 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow-green {
+  0%, 100% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+}
+
+.workout__status-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+
+.workout__fps {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.workout__fps-value {
+  color: var(--green);
+}
+
+.workout__topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.workout__flip-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.workout__flip-btn:hover {
+  background: var(--orange-100);
+  border-color: var(--orange-500);
+  color: var(--orange-500);
+}
+
+.workout__flip-btn:active {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
+}
+
+/* Torch Button */
+.workout__torch-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.workout__torch-btn:hover {
+  background: var(--orange-100);
+  border-color: var(--orange-500);
+  color: var(--orange-500);
+}
+
+.workout__torch-btn--active {
+  background: var(--orange-500);
+  border-color: var(--orange-500);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(255, 107, 0, 0.5);
+}
+
+.workout__torch-btn--active:hover {
+  background: var(--orange-600, #e06000);
+  box-shadow: 0 0 16px rgba(255, 107, 0, 0.7);
+}
+
+/* Content Layout */
+.workout__content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Sidebars */
+.workout__sidebar {
+  width: 260px;
+  padding: 16px;
+  overflow-y: auto;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--bg-primary);
+}
+
+.workout__sidebar--left {
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.workout__sidebar--right {
+  border-left: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.workout__controls-hint {
+  margin-top: auto;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+.workout__controls-hint p:first-child {
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+/* Camera View */
+.workout__camera-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a2e;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  margin: 8px 0;
+}
+
+.workout__video {
+  display: none; /* Hidden — we draw on canvas instead */
+}
+
+.workout__canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Loading Overlay */
+.workout__loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(26, 26, 46, 0.95);
+  z-index: 10;
+}
+
+.workout__spinner {
+  color: var(--orange-400);
+  animation: spin 1.5s linear infinite;
+}
+
+.workout__loading-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.workout__loading-sub {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+/* Error Overlay */
+.workout__error-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(26, 26, 46, 0.95);
+  color: var(--red);
+  z-index: 10;
+}
+
+.workout__error-text {
+  font-size: 1rem;
+  color: #ccc;
+  text-align: center;
+  max-width: 400px;
+}
+
+.workout__error-btn {
+  padding: 10px 28px;
+  border: 1px solid var(--orange-500);
+  border-radius: var(--radius-full);
+  background: rgba(255, 107, 0, 0.15);
+  color: var(--orange-500);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.workout__error-btn:hover {
+  background: var(--orange-500);
+  color: white;
+}
+
+/* Responsive — Mobile Layout */
+@media (max-width: 1024px) {
+  .workout {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .workout__content {
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .workout__camera-wrap {
+    order: 1;
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .workout__sidebar {
+    width: 100%;
+    border: none !important;
+    padding: 8px 10px;
+    gap: 6px;
+    overflow-y: visible;
+    flex-shrink: 0;
+  }
+
+  .workout__sidebar--right {
+    order: 2;
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    padding-bottom: 4px;
+  }
+
+  .workout__sidebar--left {
+    order: 3;
+    padding-top: 4px;
+    padding-bottom: 10px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+
+  .workout__controls-hint {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .workout__topbar {
+    padding: 6px 10px;
+  }
+
+  .workout__back-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .workout__back-btn span {
+    display: none;
+  }
+
+  .workout__status-text {
+    font-size: 0.55rem;
+    letter-spacing: 0.5px;
+  }
+
+  .workout__fps {
+    font-size: 0.6rem;
+  }
+
+  .workout__sidebar {
+    padding: 6px 8px;
+  }
+}
