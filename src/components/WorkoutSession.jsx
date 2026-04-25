@@ -292,6 +292,8 @@ function WorkoutSession({ onBack }) {
       const key = e.key;
       if (['1', '2', '3', '4'].includes(key)) {
         handleExerciseSwitch(key);
+      } else if (key === 'd' || key === 'D') {
+        handleDeselect();
       } else if (key === 'r' || key === 'R') {
         handleReset();
       } else if (key === 'Escape') {
@@ -469,6 +471,7 @@ function WorkoutSession({ onBack }) {
           <div className="workout__controls-hint">
             <p>⌨️ Keyboard shortcuts:</p>
             <p><strong>1-4</strong> Switch exercise</p>
+            <p><strong>D</strong> Deselect exercise</p>
             <p><strong>R</strong> Reset counter</p>
             <p><strong>ESC</strong> Go back</p>
           </div>

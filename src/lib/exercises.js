@@ -10,6 +10,11 @@
  *
  *   Counter increases ONLY on a full A -> B -> A transition.
  *   Half-reps (not reaching State B) are NOT counted.
+ *
+ * Bilateral vs Unilateral:
+ *   Bilateral exercises (squat, push-up, shoulder press) use BOTH arms/legs
+ *   together — only the primary side drives rep counting to prevent double-counting.
+ *   Unilateral exercises (bicep curl) track each side independently.
  */
 
 /**
@@ -17,9 +22,13 @@
  * Each exercise tracks three body landmarks (forming an angle),
  * defines thresholds for "up" and "down" states, and provides
  * form feedback when the user is in a problematic range.
+ *
+ * @param {boolean} bilateral - If true, both sides move together and only
+ *   the primary (left) side drives the rep counter. The right side is used
+ *   only for angle visualization and form feedback.
  */
 class Exercise {
-  constructor(name, landmarks, altLandmarks, upThreshold, downThreshold, feedbackMsg, feedbackRange, icon) {
+  constructor(name, landmarks, altLandmarks, upThreshold, downThreshold, feedbackMsg, feedbackRange, icon, bilateral = false) {
     this.name = name;
     this.landmarks = landmarks;          // [p1, p2, p3] - Left side MediaPipe indices
     this.altLandmarks = altLandmarks;    // [p1, p2, p3] - Right side (alternate)
@@ -28,6 +37,7 @@ class Exercise {
     this.feedbackMsg = feedbackMsg;
     this.feedbackRange = feedbackRange; // [low, high]
     this.icon = icon;
+    this.bilateral = bilateral;         // Both sides move together (e.g., shoulder press)
 
     // State Machine variables
     this.counter = 0;
@@ -40,16 +50,25 @@ class Exercise {
 
   /**
    * Update the state machine with left and right angles.
-   * Processes both sides independently to support alternating reps or two-side exercises.
+   *
+   * For BILATERAL exercises: averages both angles into a single value and
+   * runs one state machine pass — guaranteeing exactly 1 rep per movement.
+   *
+   * For UNILATERAL exercises: processes each side independently so
+   * alternating reps (e.g., left curl then right curl) each count.
    */
   update(angleLeft, angleRight) {
-    let repsToCount = 0;
     let newFeedback = '';
     let worstColor = '#10B981';
 
+    /**
+     * Process a single angle through the state machine.
+     * Returns { phase, repCompleted }.
+     */
     const processSide = (angle, currentPhase) => {
       let phase = currentPhase;
-      if (angle === null || angle === undefined) return phase;
+      let repCompleted = false;
+      if (angle === null || angle === undefined) return { phase, repCompleted };
 
       if (angle < this.downThreshold) {
         phase = 'DOWN';
@@ -57,7 +76,7 @@ class Exercise {
         worstColor = '#10B981';
       } else if (angle > this.upThreshold) {
         if (phase === 'DOWN') {
-          repsToCount += 1;
+          repCompleted = true;
           phase = 'UP';
           newFeedback = 'REP COUNTED!';
           worstColor = '#10B981';
@@ -71,19 +90,42 @@ class Exercise {
           worstColor = '#F59E0B'; // Orange warning
         }
       }
-      return phase;
+      return { phase, repCompleted };
     };
 
-    if (angleLeft !== null && angleLeft !== undefined) {
-      this.phaseLeft = processSide(angleLeft, this.phaseLeft);
-    }
-    if (angleRight !== null && angleRight !== undefined) {
-      this.phaseRight = processSide(angleRight, this.phaseRight);
-    }
+    if (this.bilateral) {
+      // --- BILATERAL MODE ---
+      // Merge both sides into a single representative angle.
+      // Use the average if both are available, otherwise whichever is present.
+      let mergedAngle = null;
+      if (angleLeft != null && angleRight != null) {
+        mergedAngle = (angleLeft + angleRight) / 2;
+      } else if (angleLeft != null) {
+        mergedAngle = angleLeft;
+      } else if (angleRight != null) {
+        mergedAngle = angleRight;
+      }
 
-    if (repsToCount > 0) {
-      // If both arms complete a rep in the exact same frame, just count 1
-      this.counter += repsToCount > 1 ? 1 : 1;
+      const { phase, repCompleted } = processSide(mergedAngle, this.phaseLeft);
+      this.phaseLeft = phase;
+      this.phaseRight = phase; // Keep in sync for UI
+
+      if (repCompleted) {
+        this.counter += 1;
+      }
+    } else {
+      // --- UNILATERAL MODE ---
+      // Each side counts independently (e.g., alternating bicep curls).
+      if (angleLeft != null) {
+        const resultL = processSide(angleLeft, this.phaseLeft);
+        this.phaseLeft = resultL.phase;
+        if (resultL.repCompleted) this.counter += 1;
+      }
+      if (angleRight != null) {
+        const resultR = processSide(angleRight, this.phaseRight);
+        this.phaseRight = resultR.phase;
+        if (resultR.repCompleted) this.counter += 1;
+      }
     }
 
     if (newFeedback) {
@@ -115,20 +157,22 @@ class Exercise {
  * Left: 23,25,27 | Right: 24,26,28
  * Relaxed thresholds: Standing > 155 | Squatting < 110
  * (more forgiving for front-facing camera)
+ * BILATERAL: both legs move together
  */
 class Squat extends Exercise {
   constructor() {
-    super('SQUAT', [23, 25, 27], [24, 26, 28], 155, 110, 'LOWER!', [110, 140], '🏋️');
+    super('SQUAT', [23, 25, 27], [24, 26, 28], 155, 110, 'LOWER!', [110, 140], '🏋️', true);
   }
 }
 
 /**
  * Bicep Curl: Shoulder -> Elbow -> Wrist
  * Left: 11,13,15 | Right: 12,14,16
+ * UNILATERAL: each arm counts independently (alternating curls)
  */
 class BicepCurl extends Exercise {
   constructor() {
-    super('BICEP CURL', [11, 13, 15], [12, 14, 16], 160, 40, 'CURL MORE!', [40, 80], '💪');
+    super('BICEP CURL', [11, 13, 15], [12, 14, 16], 160, 40, 'CURL MORE!', [40, 80], '💪', false);
   }
 }
 
@@ -136,20 +180,22 @@ class BicepCurl extends Exercise {
  * Push-Up: Shoulder -> Elbow -> Wrist
  * Left: 11,13,15 | Right: 12,14,16
  * Relaxed thresholds: Up > 155 | Down < 100
+ * BILATERAL: both arms move together
  */
 class PushUp extends Exercise {
   constructor() {
-    super('PUSH-UP', [11, 13, 15], [12, 14, 16], 155, 100, 'GO LOWER!', [100, 130], '🫸');
+    super('PUSH-UP', [11, 13, 15], [12, 14, 16], 155, 100, 'GO LOWER!', [100, 130], '🫸', true);
   }
 }
 
 /**
  * Shoulder Press: Hip -> Shoulder -> Elbow
  * Left: 23,11,13 | Right: 24,12,14
+ * BILATERAL: both arms move together
  */
 class ShoulderPress extends Exercise {
   constructor() {
-    super('SHOULDER PRESS', [23, 11, 13], [24, 12, 14], 160, 40, 'EXTEND FULLY!', [120, 160], '🙌');
+    super('SHOULDER PRESS', [23, 11, 13], [24, 12, 14], 160, 40, 'EXTEND FULLY!', [120, 160], '🙌', true);
   }
 }
 
