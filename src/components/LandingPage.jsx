@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Camera, Dumbbell, Activity, Zap, ChevronRight, Target, TrendingUp, BarChart3, Shield } from 'lucide-react';
 import './LandingPage.css';
 
@@ -63,6 +64,30 @@ const BENEFITS = [
 ];
 
 function LandingPage({ onStart }) {
+  const [visitorCount, setVisitorCount] = useState(null);
+
+  useEffect(() => {
+    async function fetchVisitorCount() {
+      try {
+        // Only increment once per browser session
+        const alreadyCounted = sessionStorage.getItem('gym-bro-counted');
+        const endpoint = alreadyCounted
+          ? 'https://abacus.jasoncameron.dev/get/ai-gym-bro-web/visits'
+          : 'https://abacus.jasoncameron.dev/hit/ai-gym-bro-web/visits';
+
+        const res = await fetch(endpoint);
+        const data = await res.json();
+        if (data && data.value != null) {
+          setVisitorCount(data.value);
+          sessionStorage.setItem('gym-bro-counted', 'true');
+        }
+      } catch (err) {
+        console.warn('Visitor counter unavailable:', err);
+      }
+    }
+    fetchVisitorCount();
+  }, []);
+
   return (
     <div className="landing">
       {/* Navigation */}
@@ -224,6 +249,7 @@ function LandingPage({ onStart }) {
             <a href="#how-it-works">Support</a>
           </div>
         </div>
+
         <div className="landing__footer-bottom">
           <p>Built by <strong>Muhammad Umer Farooq</strong> — Superior University Student</p>
           <p>© 2025 AI Gym Bro. All rights reserved.</p>

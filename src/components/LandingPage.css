@@ -597,6 +597,31 @@
   color: var(--orange-500);
 }
 
+.landing__visitor-counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.landing__visitor-count {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--orange-500);
+  letter-spacing: 1px;
+}
+
+.landing__visitor-label {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
 .landing__footer-bottom {
   text-align: center;
   color: var(--text-muted);
