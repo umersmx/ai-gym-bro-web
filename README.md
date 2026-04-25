@@ -210,7 +210,7 @@ We use GitHub **Issues** to maintain a professional, transparent engineering wor
 
 | Role | Responsibility |
 |---|---|
-| **Group Lead** ([@arks](https://github.com/arks)) | Creates Issues for planned features and improvements (e.g., *"Add Squat detection"*, *"Improve UI overlay colors"*). |
+| **Group Lead** ([@ARKS-luxe](https://github.com/arks-luxe)) | Creates Issues for planned features and improvements (e.g., *"Add Squat detection"*, *"Improve UI overlay colors"*). |
 | **Lead Developer** ([@umersmx](https://github.com/umersmx)) | Assigns issues, implements the solution, and closes with an associated commit — creating a full public audit trail. |
 
 <!-- **Want to contribute?** Fork the repo, create a feature branch, and submit a Pull Request. All contributions are welcome!-->
@@ -239,8 +239,8 @@ npx vercel --prod
       <sub>Lead Developer</sub>
     </td>
     <td align="center">
-      <a href="https://github.com/arks">
-        <img src="https://github.com/arks.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
+      <a href="https://github.com/arks-luxe">
+        <img src="https://github.com/arks-luxe.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
         <sub><b>Abdur Rehman K. Saeed</b></sub>
       </a><br />
       <sub>Group Lead</sub>
