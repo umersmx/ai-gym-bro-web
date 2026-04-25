@@ -195,7 +195,7 @@ function LandingPage({ onStart }) {
                 </div>
               </div>
               <p className="landing__exercise-instructions">{ex.instructions}</p>
-              
+
               <div className="landing__exercise-card-bottom">
                 <div className="landing__exercise-title-wrap">
                   <span className="landing__exercise-icon">{ex.icon}</span>
@@ -252,7 +252,7 @@ function LandingPage({ onStart }) {
 
         <div className="landing__footer-bottom">
           <p>Built by <strong>Muhammad Umer Farooq</strong> — Superior University Student</p>
-          <p>© 2025 AI Gym Bro. All rights reserved.</p>
+          <p>© 2026 AI Gym Bro. All rights reserved.</p>
         </div>
       </footer>
     </div>
