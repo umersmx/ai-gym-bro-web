@@ -247,7 +247,7 @@ npx vercel --prod
     </td>
     <td align="center">
       <a href="https://github.com/touchibhai">
-        <img src="https://github.com/arks-luxe.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
+        <img src="https://github.com/touchibhai.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
         <sub><b>Kamrosh Butt</b></sub>
       </a><br />
       <sub>Testing and Debugging</sub>
