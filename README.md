@@ -236,7 +236,7 @@ npx vercel --prod
         <img src="https://github.com/umersmx.png" width="80px;" alt="Umer Farooq"/><br />
         <sub><b>Umer Farooq</b></sub>
       </a><br />
-      <sub>Lead Developer</sub>
+      <sub>Full-Stack Engineer</sub>
     </td>
     <td align="center">
       <a href="https://github.com/arks-luxe">
@@ -250,7 +250,7 @@ npx vercel --prod
         <img src="https://github.com/touchibhai.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
         <sub><b>Kamrosh Butt</b></sub>
       </a><br />
-      <sub>Machine Learning (ML) Researcher / Data Engineer</sub>
+      <sub>Machine Learning (ML) Researcher <br> / Data Engineer</sub>
     </td>
   </tr>
 </table>
