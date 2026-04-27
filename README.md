@@ -250,7 +250,7 @@ npx vercel --prod
         <img src="https://github.com/touchibhai.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
         <sub><b>Kamrosh Butt</b></sub>
       </a><br />
-      <sub>Machine Learning (ML) Researcher <br> / Data Engineer</sub>
+      <sub>ML Engineer</sub>
     </td>
   </tr>
 </table>
