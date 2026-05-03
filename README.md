@@ -257,7 +257,7 @@ npx vercel --prod
         <img src="https://github.com/Rao-UsmanJaved.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
         <sub><b>Usman Javed</b></sub>
       </a><br />
-      <sub>Quality Assurance (QA) Engineer</sub>
+      <sub>QA Engineer</sub>
     </td>
   </tr>
 </table>
