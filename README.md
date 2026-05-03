@@ -239,8 +239,8 @@ npx vercel --prod
       <sub>Full-Stack Engineer</sub>
     </td>
     <td align="center">
-      <a href="https://github.com/arks-luxe">
-        <img src="https://github.com/arks-luxe.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
+      <a href="https://github.com/AbdulRahmanKSaeed">
+        <img src="https://github.com/AbdulRahmanKSaeed.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
         <sub><b>Abdur Rehman K. Saeed</b></sub>
       </a><br />
       <sub>Group Lead</sub>
