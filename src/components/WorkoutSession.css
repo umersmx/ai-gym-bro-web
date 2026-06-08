@@ -300,18 +300,8 @@
   box-shadow: 0 0 16px rgba(0, 223, 137, 0.4);
 }
 
-/* Mobile stats wraps */
-.workout__mobile-stats-wrap {
-  display: none;
-}
-
-/* Mobile tab views */
-.workout__mobile-tab-view {
-  display: none;
-}
-
-/* Mobile Bottom Navigation Bar */
-.workout__mobile-nav {
+/* Mobile Dashboard styling (hidden on desktop) */
+.workout__mobile-dashboard {
   display: none;
 }
 
@@ -480,7 +470,7 @@
   .workout {
     height: 100vh;
     height: 100dvh;
-    padding-bottom: 64px; /* Space for bottom nav */
+    padding-bottom: 0;
   }
 
   .workout__sidebar--desktop-only {
@@ -520,29 +510,14 @@
     display: none;
   }
 
-  .workout__topbar-right .workout__fps,
   .workout__topbar-right .workout__torch-btn,
   .workout__topbar-right .workout__flip-btn {
-    display: none;
+    display: flex;
   }
 
-  .workout__header-icons-mobile {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    font-size: 1.2rem;
-    cursor: pointer;
-  }
-
-  .workout__header-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
+  .workout__topbar-right .workout__fps {
+    display: block;
+    font-size: 0.7rem;
   }
 
   .workout__center-view {
@@ -550,126 +525,158 @@
   }
 
   .workout__camera-wrap {
-    margin: 8px 12px;
+    margin: 12px 12px 0 12px;
     border-radius: var(--radius-md);
-    min-height: 240px;
+    flex: none;
+    height: 75vh;
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
-  /* Show mobile stats under camera on active view */
-  .workout__mobile-stats-wrap {
+  .workout__canvas {
+    object-fit: cover;
+    border-radius: calc(var(--radius-md) - 1px);
+  }
+
+  /* Show mobile dashboard under camera */
+  .workout__mobile-dashboard {
     display: flex;
     flex-direction: column;
+    gap: 16px;
+    padding: 8px 12px;
   }
 
-  /* Show mobile tab content blocks */
-  .workout__mobile-tab-view {
-    display: block;
-  }
-
-  .workout__mobile-tab-view--padded {
-    padding: 20px 16px;
-  }
-
-  .workout__mobile-section-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    color: #ffffff;
-    margin-bottom: 16px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .workout__mobile-sessions-list {
+  .workout__mobile-counter-card {
+    background: rgba(30, 41, 59, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-  }
-
-  .workout__empty-history {
-    text-align: center;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    padding: 20px 0;
-  }
-
-  /* Bottom navigation bar visible on mobile */
-  .workout__mobile-nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 64px;
-    background: rgba(9, 13, 22, 0.92);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    z-index: 100;
     align-items: center;
-    justify-content: space-around;
-    padding: 0 10px;
-    padding-bottom: env(safe-area-inset-bottom);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
-  .workout__mobile-nav-btn {
+  .workout__mobile-counter-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 8px;
+  }
+
+  .workout__mobile-exercise-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 1px;
+  }
+
+  .workout__mobile-reset-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+  }
+
+  .workout__mobile-reset-btn:active {
+    transform: scale(0.9) rotate(-180deg);
+  }
+
+  .workout__mobile-counter-body {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 500;
-    gap: 4px;
-    flex: 1;
-    transition: color var(--transition-fast);
-    padding: 6px 0;
+    padding: 10px 0;
   }
 
-  .workout__mobile-nav-btn--active {
+  .workout__mobile-counter-val {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
     color: var(--green-500);
+    line-height: 1;
+    text-shadow: 0 0 16px rgba(0, 223, 137, 0.35);
+    animation: count-bounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
-  /* Center plus circular button */
-  .workout__mobile-nav-btn--center {
-    position: relative;
-    top: -14px;
-    overflow: visible;
+  @keyframes count-bounce {
+    0% { transform: scale(0.85); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
   }
 
-  .workout__mobile-nav-plus-circle {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: var(--green-500);
-    color: #090d16;
+  .workout__mobile-counter-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    margin-top: 6px;
+  }
+
+  .workout__mobile-feedback-card {
+    background: rgba(30, 41, 59, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    padding: 16px;
     display: flex;
+    flex-direction: column;
+    gap: 8px;
     align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 20px rgba(0, 223, 137, 0.5);
-    border: 3px solid #090d16;
-    transition: transform 0.2s ease;
+    text-align: center;
+    transition: border-color var(--transition);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
-  .workout__mobile-nav-btn--active .workout__mobile-nav-plus-circle {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px rgba(0, 223, 137, 0.75);
+  .workout__mobile-feedback-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 2px;
   }
 
-  /* Style Exercise Selector inside Mobile Tab View to be large vertical buttons */
-  .workout__mobile-tab-view .exercise-selector__list {
+  .workout__mobile-feedback-val {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: color var(--transition);
+    animation: pulse-glow-text 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow-text {
+    0%, 100% { opacity: 0.85; }
+    50% { opacity: 1; transform: scale(1.02); }
+  }
+
+  .workout__mobile-exercise-selector-wrap {
+    margin-top: 8px;
+    margin-bottom: 24px;
+  }
+
+  /* Style Exercise Selector inside Mobile Dashboard to be large vertical buttons */
+  .workout__mobile-exercise-selector-wrap .exercise-selector__list {
     display: flex !important;
     flex-direction: column !important;
     gap: 12px !important;
     width: 100% !important;
-    max-width: 420px !important;
-    margin: 16px auto 0 !important;
+    margin: 16px 0 0 0 !important;
   }
 
-  .workout__mobile-tab-view .exercise-selector__btn {
+  .workout__mobile-exercise-selector-wrap .exercise-selector__btn {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
@@ -682,16 +689,18 @@
     width: 100% !important;
     background: rgba(255, 255, 255, 0.03) !important;
     border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
   }
 
-  .workout__mobile-tab-view .exercise-selector__btn:hover,
-  .workout__mobile-tab-view .exercise-selector__btn:active {
+  .workout__mobile-exercise-selector-wrap .exercise-selector__btn:hover,
+  .workout__mobile-exercise-selector-wrap .exercise-selector__btn:active {
     background: rgba(0, 223, 137, 0.08) !important;
     border-color: var(--green-500) !important;
     color: #ffffff !important;
   }
 
-  .workout__mobile-tab-view .exercise-selector__name {
+  .workout__mobile-exercise-selector-wrap .exercise-selector__name {
     display: block !important;
     font-size: 1rem !important;
     font-weight: 600 !important;
@@ -699,12 +708,12 @@
     text-align: left !important;
   }
 
-  .workout__mobile-tab-view .exercise-selector__icon {
+  .workout__mobile-exercise-selector-wrap .exercise-selector__icon {
     font-size: 1.6rem !important;
     display: inline-block !important;
   }
 
-  .workout__mobile-tab-view .exercise-selector__key {
+  .workout__mobile-exercise-selector-wrap .exercise-selector__key {
     display: inline-block !important;
     font-family: 'Orbitron', monospace !important;
     font-size: 0.8rem !important;
@@ -713,8 +722,29 @@
     border-radius: 6px !important;
   }
 
-  .workout__mobile-tab-view .exercise-selector__btn--active .exercise-selector__key {
+  .workout__mobile-exercise-selector-wrap .exercise-selector__btn--active .exercise-selector__key {
     background: rgba(0, 223, 137, 0.15) !important;
     color: var(--green-500) !important;
+  }
+
+  .workout__mobile-exercise-selector-wrap .exercise-selector__btn--deselect {
+    background: rgba(244, 63, 94, 0.05) !important;
+    border-color: rgba(244, 63, 94, 0.3) !important;
+    color: var(--red) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 700 !important;
+    gap: 12px !important;
+    margin-top: 8px !important;
+    border-radius: 14px !important;
+    min-height: 52px !important;
+  }
+
+  .workout__mobile-exercise-selector-wrap .exercise-selector__btn--deselect:hover,
+  .workout__mobile-exercise-selector-wrap .exercise-selector__btn--deselect:active {
+    background: rgba(244, 63, 94, 0.12) !important;
+    border-color: var(--red) !important;
+    color: #ffffff !important;
   }
 }
