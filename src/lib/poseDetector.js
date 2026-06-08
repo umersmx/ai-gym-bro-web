@@ -38,8 +38,17 @@ export class PoseDetector {
   constructor() {
     this.landmarker = null;
     this.lastResult = null;
-    this.landmarks = []; // [{x, y, z, visibility}, ...]
+    this.landmarks = [];          // [{x, y, z, visibility}, ...]
+    this.smoothedLandmarks = [];   // EMA-smoothed landmarks from previous frame
     this.isReady = false;
+
+    /**
+     * Smoothing factor (0–1).
+     *   0 = fully smoothed (frozen, no response)
+     *   1 = no smoothing (raw MediaPipe output)
+     *   0.5–0.7 = sweet spot for real-time exercise tracking
+     */
+    this.smoothingAlpha = 0.6;
   }
 
   /**
@@ -86,7 +95,8 @@ export class PoseDetector {
       this.lastResult = result;
 
       if (result.landmarks && result.landmarks.length > 0) {
-        this.landmarks = result.landmarks[0];
+        const rawLandmarks = result.landmarks[0];
+        this.landmarks = this._smooth(rawLandmarks);
         return this.landmarks;
       }
     } catch (e) {
@@ -94,7 +104,45 @@ export class PoseDetector {
     }
 
     this.landmarks = [];
+    this.smoothedLandmarks = []; // Reset smoothing when body is lost
     return null;
+  }
+
+  /**
+   * Apply Exponential Moving Average (EMA) smoothing to landmarks.
+   * Blends each new coordinate with the previous smoothed value:
+   *   smoothed = alpha * new + (1 - alpha) * previous
+   *
+   * This eliminates frame-to-frame jitter while keeping the skeleton
+   * responsive enough for real-time exercise tracking.
+   *
+   * @param {Array} rawLandmarks - Raw landmarks from MediaPipe
+   * @returns {Array} Smoothed landmarks
+   */
+  _smooth(rawLandmarks) {
+    const alpha = this.smoothingAlpha;
+
+    // First frame — no previous data to blend with
+    if (this.smoothedLandmarks.length === 0) {
+      this.smoothedLandmarks = rawLandmarks.map(pt => ({ ...pt }));
+      // Return independent copies so external mutation won't affect our history
+      return this.smoothedLandmarks.map(pt => ({ ...pt }));
+    }
+
+    // Blend each landmark with its previous smoothed position
+    this.smoothedLandmarks = rawLandmarks.map((pt, i) => {
+      const prev = this.smoothedLandmarks[i];
+      return {
+        x: alpha * pt.x + (1 - alpha) * prev.x,
+        y: alpha * pt.y + (1 - alpha) * prev.y,
+        z: alpha * pt.z + (1 - alpha) * prev.z,
+        visibility: pt.visibility,
+      };
+    });
+
+    // Return independent copies — WorkoutSession mirrors these in-place,
+    // so we must not let that mutation corrupt our smoothing history.
+    return this.smoothedLandmarks.map(pt => ({ ...pt }));
   }
 
   /**

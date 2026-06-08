@@ -1,5 +1,5 @@
 /* ============================================
-   Stats Panel - Orange & White Theme
+   Stats Panel - Cyber Dark Theme
    ============================================ */
 
 .stats-panel {
@@ -8,8 +8,10 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  background: var(--bg-card);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba(30, 41, 59, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: var(--shadow-soft);
 }
 
@@ -22,18 +24,19 @@
 
 .stats-panel__exercise {
   font-family: 'Orbitron', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--orange-500);
-  letter-spacing: 1px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
 .stats-panel__reset {
   width: 32px;
   height: 32px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: var(--radius-sm);
-  background: var(--bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
   color: var(--text-secondary);
   cursor: pointer;
   display: flex;
@@ -43,56 +46,62 @@
 }
 
 .stats-panel__reset:hover {
-  background: rgba(239, 68, 68, 0.08);
+  background: rgba(244, 63, 94, 0.08);
   border-color: var(--red);
   color: var(--red);
 }
 
-/* Counter */
+/* Counter LCD Box */
 .stats-panel__counter-wrap {
   text-align: center;
-  padding: 16px 0;
+  padding: 24px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 223, 137, 0.25);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.4), 0 0 16px rgba(0, 223, 137, 0.05);
 }
 
 .stats-panel__counter-label {
   display: block;
   font-family: 'Orbitron', sans-serif;
   font-size: 0.65rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
   letter-spacing: 3px;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 .stats-panel__counter {
   font-family: 'Orbitron', sans-serif;
-  font-size: 4rem;
+  font-size: 4.8rem;
   font-weight: 900;
-  color: var(--orange-500);
+  color: var(--green-500);
+  text-shadow: 0 0 20px rgba(0, 223, 137, 0.5);
   line-height: 1;
-  animation: counterPop 0.3s ease;
+  display: block;
+  animation: counterPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Phase */
+/* Phase Pill */
 .stats-panel__phase-wrap {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
-  background: var(--bg-secondary);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .stats-panel__phase-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
 }
 
 .stats-panel__phase-dot--up {
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
+  background: var(--green-500);
+  box-shadow: 0 0 8px var(--green-500);
 }
 
 .stats-panel__phase-dot--down {
@@ -102,7 +111,7 @@
 
 .stats-panel__phase-label {
   font-size: 0.7rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
   letter-spacing: 1px;
 }
@@ -110,56 +119,56 @@
 .stats-panel__phase-value {
   font-family: 'Orbitron', sans-serif;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 800;
   flex: 1;
 }
 
 .stats-panel__phase-value--up {
-  color: var(--green);
+  color: var(--green-500);
 }
 
 .stats-panel__phase-value--down {
   color: var(--orange);
 }
 
-/* Angle */
+/* Angle Display */
 .stats-panel__angle-wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
-  background: var(--bg-secondary);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .stats-panel__angle-label {
   font-size: 0.7rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
   letter-spacing: 1px;
 }
 
 .stats-panel__angle-value {
   font-family: 'Orbitron', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--orange-400);
+  color: var(--green-400);
 }
 
 /* Feedback */
 .stats-panel__feedback-wrap {
   padding: 14px;
   border-radius: var(--radius-sm);
-  background: var(--bg-secondary);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.03);
   text-align: center;
 }
 
 .stats-panel__feedback-label {
   display: block;
   font-size: 0.65rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
   letter-spacing: 2px;
   margin-bottom: 8px;
@@ -167,14 +176,14 @@
 
 .stats-panel__feedback {
   font-family: 'Orbitron', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   min-height: 1.4em;
   transition: color var(--transition-fast);
 }
 
 /* Mobile: ultra-compact stats panel */
-@media (max-width: 1024px) {
+@media (max-width: 1024px) and (min-width: 769px) {
   .stats-panel {
     padding: 8px 10px;
     gap: 8px;
@@ -257,6 +266,122 @@
   }
 }
 
+/* Mockup Layout for Phone Viewports (< 768px) */
+@media (max-width: 768px) {
+  .stats-panel {
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .stats-panel__header {
+    grid-column: 1 / -1;
+    background: rgba(30, 41, 59, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+
+  .stats-panel__exercise {
+    font-size: 0.8rem;
+  }
+
+  .stats-panel__reset {
+    width: 28px;
+    height: 28px;
+  }
+
+  .stats-panel__counter-wrap {
+    grid-column: 1;
+    margin: 0;
+    padding: 16px 10px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1.5px solid var(--green-500);
+    border-radius: var(--radius-md);
+    box-shadow: 0 0 16px rgba(0, 223, 137, 0.1);
+  }
+
+  .stats-panel__counter-label {
+    font-size: 0.55rem;
+    margin-bottom: 4px;
+  }
+
+  .stats-panel__counter {
+    font-size: 2.6rem;
+  }
+
+  .stats-panel__phase-wrap {
+    grid-column: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 16px 10px;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+  }
+
+  .stats-panel__phase-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .stats-panel__phase-label {
+    font-size: 0.55rem;
+  }
+
+  .stats-panel__phase-value {
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  .stats-panel__angle-wrap {
+    grid-column: 1;
+    padding: 12px 10px;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+    background: rgba(30, 41, 59, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-sm);
+  }
+
+  .stats-panel__angle-label {
+    font-size: 0.55rem;
+  }
+
+  .stats-panel__angle-value {
+    font-size: 0.95rem;
+  }
+
+  .stats-panel__feedback-wrap {
+    grid-column: 2;
+    padding: 12px 10px;
+    text-align: center;
+    background: rgba(30, 41, 59, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-sm);
+  }
+
+  .stats-panel__feedback-label {
+    font-size: 0.55rem;
+    margin-bottom: 4px;
+  }
+
+  .stats-panel__feedback {
+    font-size: 0.85rem;
+    min-height: auto;
+  }
+}
+
 @media (max-width: 640px) {
   .stats-panel {
     padding: 6px 8px;
@@ -268,14 +393,13 @@
   }
 
   .stats-panel__exercise {
-    font-size: 0.6rem;
+    font-size: 0.65rem;
   }
 
   .stats-panel__feedback {
     font-size: 0.65rem;
   }
 
-  /* Hide angle on very small screens to save space */
   .stats-panel__angle-wrap {
     display: none;
   }

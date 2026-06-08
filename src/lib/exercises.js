@@ -28,7 +28,7 @@
  *   only for angle visualization and form feedback.
  */
 class Exercise {
-  constructor(name, landmarks, altLandmarks, upThreshold, downThreshold, feedbackMsg, feedbackRange, icon, bilateral = false) {
+  constructor(name, landmarks, altLandmarks, upThreshold, downThreshold, feedbackMsg, feedbackRange, icon, mode = 'bilateral') {
     this.name = name;
     this.landmarks = landmarks;          // [p1, p2, p3] - Left side MediaPipe indices
     this.altLandmarks = altLandmarks;    // [p1, p2, p3] - Right side (alternate)
@@ -37,7 +37,14 @@ class Exercise {
     this.feedbackMsg = feedbackMsg;
     this.feedbackRange = feedbackRange; // [low, high]
     this.icon = icon;
-    this.bilateral = bilateral;         // Both sides move together (e.g., shoulder press)
+
+    /**
+     * Tracking mode:
+     *   'bilateral'  - Average both sides into one angle (squat, push-up, shoulder press)
+     *   'debounced'  - Track sides independently, but debounce so both arms
+     *                  completing together counts as 1 rep (bicep curl)
+     */
+    this.mode = mode;
 
     // State Machine variables
     this.counter = 0;
@@ -46,6 +53,8 @@ class Exercise {
     this.phaseRight = 'UP';
     this.feedback = '';
     this.color = '#10B981'; // Green (emerald)
+    this.lastRepTime = 0;          // Timestamp of last counted rep (for debounce)
+    this.repDebouncMs = 500;       // Cooldown window in ms
   }
 
   /**
@@ -93,7 +102,7 @@ class Exercise {
       return { phase, repCompleted };
     };
 
-    if (this.bilateral) {
+    if (this.mode === 'bilateral') {
       // --- BILATERAL MODE ---
       // Merge both sides into a single representative angle.
       // Use the average if both are available, otherwise whichever is present.
@@ -113,18 +122,30 @@ class Exercise {
       if (repCompleted) {
         this.counter += 1;
       }
-    } else {
-      // --- UNILATERAL MODE ---
-      // Each side counts independently (e.g., alternating bicep curls).
+    } else if (this.mode === 'debounced') {
+      // --- DEBOUNCED MODE ---
+      // Track each side independently, but if both arms complete a rep
+      // within the debounce window, only count 1 rep total.
+      // Works for: single arm curls, both arms together, alternating curls.
+      const now = performance.now();
+      let repCounted = false;
+
       if (angleLeft != null) {
         const resultL = processSide(angleLeft, this.phaseLeft);
         this.phaseLeft = resultL.phase;
-        if (resultL.repCompleted) this.counter += 1;
+        if (resultL.repCompleted && (now - this.lastRepTime > this.repDebouncMs)) {
+          this.counter += 1;
+          this.lastRepTime = now;
+          repCounted = true;
+        }
       }
       if (angleRight != null) {
         const resultR = processSide(angleRight, this.phaseRight);
         this.phaseRight = resultR.phase;
-        if (resultR.repCompleted) this.counter += 1;
+        if (resultR.repCompleted && !repCounted && (now - this.lastRepTime > this.repDebouncMs)) {
+          this.counter += 1;
+          this.lastRepTime = now;
+        }
       }
     }
 
@@ -149,6 +170,7 @@ class Exercise {
     this.phaseRight = 'UP';
     this.feedback = '';
     this.color = '#10B981';
+    this.lastRepTime = 0;
   }
 }
 
@@ -161,18 +183,18 @@ class Exercise {
  */
 class Squat extends Exercise {
   constructor() {
-    super('SQUAT', [23, 25, 27], [24, 26, 28], 155, 110, 'LOWER!', [110, 140], '🏋️', true);
+    super('SQUAT', [23, 25, 27], [24, 26, 28], 155, 110, 'LOWER!', [110, 140], '🏋️', 'bilateral');
   }
 }
 
 /**
  * Bicep Curl: Shoulder -> Elbow -> Wrist
  * Left: 11,13,15 | Right: 12,14,16
- * UNILATERAL: each arm counts independently (alternating curls)
+ * BILATERAL: both arms count as one rep when curled together
  */
 class BicepCurl extends Exercise {
   constructor() {
-    super('BICEP CURL', [11, 13, 15], [12, 14, 16], 160, 40, 'CURL MORE!', [40, 80], '💪', false);
+    super('BICEP CURL', [11, 13, 15], [12, 14, 16], 160, 40, 'CURL MORE!', [40, 80], '💪', 'debounced');
   }
 }
 
@@ -184,7 +206,7 @@ class BicepCurl extends Exercise {
  */
 class PushUp extends Exercise {
   constructor() {
-    super('PUSH-UP', [11, 13, 15], [12, 14, 16], 155, 100, 'GO LOWER!', [100, 130], '🫸', true);
+    super('PUSH-UP', [11, 13, 15], [12, 14, 16], 155, 100, 'GO LOWER!', [100, 130], '🫸', 'bilateral');
   }
 }
 
@@ -195,7 +217,7 @@ class PushUp extends Exercise {
  */
 class ShoulderPress extends Exercise {
   constructor() {
-    super('SHOULDER PRESS', [23, 11, 13], [24, 12, 14], 160, 40, 'EXTEND FULLY!', [120, 160], '🙌', true);
+    super('SHOULDER PRESS', [23, 11, 13], [24, 12, 14], 160, 40, 'EXTEND FULLY!', [120, 160], '🙌', 'bilateral');
   }
 }
 

@@ -3,20 +3,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: transparent;
   padding: 20px;
 }
 
 .visits__card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(30, 41, 59, 0.35);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 24px;
   padding: 48px 40px;
   text-align: center;
   max-width: 420px;
   width: 100%;
   animation: visitsFadeIn 0.6s ease;
+  box-shadow: var(--shadow-elevated);
 }
 
 @keyframes visitsFadeIn {
@@ -34,9 +35,9 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
   padding: 8px 16px;
   border-radius: 20px;
   font-family: 'Inter', sans-serif;
@@ -48,20 +49,21 @@
 }
 
 .visits__back:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .visits__icon {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: rgba(255, 107, 0, 0.15);
-  color: #FF6B00;
+  background: rgba(0, 223, 137, 0.08);
+  color: var(--green-500);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
+  border: 1px solid rgba(0, 223, 137, 0.2);
 }
 
 .visits__title {
@@ -74,13 +76,13 @@
 }
 
 .visits__accent {
-  color: #FF6B00;
+  color: var(--green-500);
   margin: 0 2px;
 }
 
 .visits__subtitle {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -93,11 +95,11 @@
   align-items: center;
   gap: 8px;
   padding: 28px;
-  background: rgba(255, 107, 0, 0.08);
-  border: 1px solid rgba(255, 107, 0, 0.2);
+  background: rgba(0, 223, 137, 0.05);
+  border: 1px solid rgba(0, 223, 137, 0.15);
   border-radius: 16px;
   margin-bottom: 24px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
 }
 
 .visits__label {
@@ -105,27 +107,28 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
 }
 
 .visits__count {
   font-family: 'Orbitron', sans-serif;
   font-size: 2.8rem;
   font-weight: 900;
-  color: #FF6B00;
+  color: var(--green-500);
   letter-spacing: 2px;
+  text-shadow: 0 0 16px rgba(0, 223, 137, 0.4);
 }
 
 .visits__note {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--text-muted);
   font-style: italic;
 }
 
 .visits__note code {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.25);
   padding: 2px 8px;
   border-radius: 4px;
   font-family: 'Courier New', monospace;
-  color: rgba(255, 107, 0, 0.6);
+  color: var(--green-400);
 }

@@ -1,48 +1,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 
 /* ============================================
-   AI GYM BRO - Orange & White Design System
+   AI GYM BRO - Cyber Dark Design System
    ============================================ */
 
 :root {
-  /* Core Palette */
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #F8F9FA;
-  --bg-card: #FFFFFF;
-  --bg-card-hover: #FFF7F0;
-  --bg-glass: rgba(255, 255, 255, 0.92);
-  --bg-dark: #1A1A2E;
+  /* Core Palette - Cyber Dark */
+  --bg-primary: #090d16;
+  --bg-secondary: #0d1527;
+  --bg-card: rgba(30, 41, 59, 0.4);
+  --bg-card-hover: rgba(30, 41, 59, 0.7);
+  --bg-glass: rgba(9, 13, 22, 0.85);
+  --bg-dark: #090d16;
 
-  /* Accent Colors */
-  --orange-500: #FF6B00;
-  --orange-400: #FF8533;
-  --orange-600: #E05E00;
-  --orange-100: #FFF0E5;
-  --orange-50: #FFF7F0;
+  /* Accent Colors - Neon Emerald & Mint */
+  --green-500: #00df89;
+  --green-400: #34d399;
+  --green-600: #059669;
+  --green-100: rgba(0, 223, 137, 0.1);
+  --green-50: rgba(0, 223, 137, 0.05);
 
   /* Text Colors */
-  --text-primary: #1A1A2E;
-  --text-secondary: #555555;
-  --text-muted: #999999;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
 
   /* Status Colors */
-  --green: #10B981;
-  --orange: #FF6B00;
-  --red: #EF4444;
-  --blue: #3B82F6;
+  --green: #00df89;
+  --orange: #f59e0b;
+  --red: #f43f5e;
+  --blue: #3b82f6;
 
   /* Spacing */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-full: 100px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.06);
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
-  --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.12);
-  --shadow-orange: 0 4px 20px rgba(255, 107, 0, 0.25);
+  /* Shadows & Glows */
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-elevated: 0 12px 48px rgba(0, 0, 0, 0.8);
+  --shadow-green: 0 0 20px rgba(0, 223, 137, 0.3);
+  --shadow-green-strong: 0 0 30px rgba(0, 223, 137, 0.5);
+  --glow-blue: 0 0 40px rgba(59, 130, 246, 0.15);
 
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -65,14 +67,41 @@ html {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg-primary);
+  background: radial-gradient(circle at 50% 0%, #111827 0%, #090d16 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Grid overlay background */
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Viewport side glow */
+body::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 100px rgba(59, 130, 246, 0.12);
+  pointer-events: none;
+  z-index: 0;
 }
 
 #root {
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 
 /* ============================================
@@ -81,14 +110,14 @@ body {
 
 .glass {
   background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glow-border {
-  border: 1px solid rgba(255, 107, 0, 0.3);
-  box-shadow: var(--shadow-orange);
+  border: 1px solid rgba(0, 223, 137, 0.3);
+  box-shadow: var(--shadow-green);
 }
 
 /* ============================================
@@ -100,16 +129,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: #1e293b;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #aaa;
+  background: var(--green-500);
 }
 
 /* ============================================
@@ -127,8 +156,8 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 0, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(255, 107, 0, 0.6), 0 0 60px rgba(255, 107, 0, 0.2); }
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 223, 137, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(0, 223, 137, 0.6), 0 0 60px rgba(0, 223, 137, 0.2); }
 }
 
 @keyframes float {

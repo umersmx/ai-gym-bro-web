@@ -12,6 +12,7 @@ function App() {
     if (hash === 'visits' || path === '/visits') return 'visits';
     return 'landing';
   });
+  const [selectedExerciseKey, setSelectedExerciseKey] = useState(null);
 
   // Listen for hash changes
   useEffect(() => {
@@ -25,7 +26,13 @@ function App() {
 
   const goToLanding = () => {
     window.location.hash = '';
+    setSelectedExerciseKey(null);
     setPage('landing');
+  };
+
+  const startWorkout = (exerciseKey = null) => {
+    setSelectedExerciseKey(exerciseKey);
+    setPage('workout');
   };
 
   return (
@@ -33,9 +40,9 @@ function App() {
       {page === 'visits' ? (
         <VisitsPage onBack={goToLanding} />
       ) : page === 'workout' ? (
-        <WorkoutSession onBack={goToLanding} />
+        <WorkoutSession initialExerciseKey={selectedExerciseKey} onBack={goToLanding} />
       ) : (
-        <LandingPage onStart={() => setPage('workout')} />
+        <LandingPage onStart={startWorkout} />
       )}
     </div>
   );

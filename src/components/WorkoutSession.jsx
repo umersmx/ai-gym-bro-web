@@ -1,13 +1,13 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, CameraOff, Loader2, RefreshCw, Zap } from 'lucide-react';
+import { CameraOff, RefreshCw, Zap, Home, Dumbbell, Plus, BookOpen, User } from 'lucide-react';
 import { PoseDetector } from '../lib/poseDetector';
-import { ExerciseDetector } from '../lib/exercises';
+import { ExerciseDetector, EXERCISE_MAP } from '../lib/exercises';
 import { calculateAngle } from '../lib/utils';
 import ExerciseSelector from './ExerciseSelector';
 import StatsPanel from './StatsPanel';
 import './WorkoutSession.css';
 
-function WorkoutSession({ onBack }) {
+function WorkoutSession({ initialExerciseKey = null, onBack }) {
   // Refs
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -20,19 +20,35 @@ function WorkoutSession({ onBack }) {
   // State
   const [status, setStatus] = useState('initializing'); // initializing | loading-model | ready | error
   const [errorMsg, setErrorMsg] = useState('');
-  const [currentKey, setCurrentKey] = useState(null);
-  const [stats, setStats] = useState({
-    name: 'SELECT EXERCISE',
-    counter: 0,
-    phase: 'UP',
-    feedback: '',
-    color: '#FF6B00',
-    angle: null,
+  const [currentKey, setCurrentKey] = useState(initialExerciseKey);
+  const [stats, setStats] = useState(() => {
+    if (initialExerciseKey && EXERCISE_MAP[initialExerciseKey]) {
+      return {
+        name: EXERCISE_MAP[initialExerciseKey].name,
+        counter: 0,
+        phase: 'UP',
+        feedback: '',
+        color: '#00df89',
+        angle: null,
+      };
+    }
+    return {
+      name: 'SELECT EXERCISE',
+      counter: 0,
+      phase: 'UP',
+      feedback: '',
+      color: '#00df89',
+      angle: null,
+    };
   });
   const [fps, setFps] = useState(0);
   const [bodyDetected, setBodyDetected] = useState(false);
   const [facingMode, setFacingMode] = useState('user');
   const [torchOn, setTorchOn] = useState(false);
+  
+  // Mobile Tab Navigation State: 'camera' | 'selector' | 'sessions' | 'profile'
+  // If no exercise is selected initially, open on the exercises selector tab so they can pick.
+  const [activeTab, setActiveTab] = useState(initialExerciseKey ? 'camera' : 'selector');
 
   // Initialize camera and pose detector
   useEffect(() => {
@@ -79,8 +95,8 @@ function WorkoutSession({ onBack }) {
 
         detectorRef.current = detector;
 
-        // Step 3: Init exercise engine (no default exercise)
-        const engine = new ExerciseDetector(null);
+        // Step 3: Init exercise engine (with initial exercise key)
+        const engine = new ExerciseDetector(initialExerciseKey);
         engineRef.current = engine;
 
         setStatus('ready');
@@ -222,9 +238,9 @@ function WorkoutSession({ onBack }) {
               ctx.stroke();
             };
 
-            drawJoint(x1, y1, '#EF4444');
-            drawJoint(x2, y2, '#FBBF24');
-            drawJoint(x3, y3, '#EF4444');
+            drawJoint(x1, y1, '#f43f5e');
+            drawJoint(x2, y2, '#f59e0b');
+            drawJoint(x3, y3, '#f43f5e');
 
             // Angle text
             ctx.font = 'bold 18px Orbitron, sans-serif';
@@ -252,7 +268,7 @@ function WorkoutSession({ onBack }) {
             ...prev,
             name: 'SELECT EXERCISE',
             feedback: 'Pick an exercise to start tracking',
-            color: '#FF6B00',
+            color: '#00df89',
           }));
         }
       } else {
@@ -260,7 +276,7 @@ function WorkoutSession({ onBack }) {
         setStats((prev) => ({
           ...prev,
           feedback: 'NO BODY DETECTED',
-          color: '#EF4444',
+          color: '#f43f5e',
           angle: null,
         }));
       }
@@ -315,9 +331,11 @@ function WorkoutSession({ onBack }) {
         counter: ex.counter,
         phase: ex.phase,
         feedback: '',
-        color: '#FF6B00',
+        color: '#00df89',
         angle: null,
       });
+      // Switch back to camera tab on mobile so they can see tracking
+      setActiveTab('camera');
     }
   }, []);
 
@@ -332,7 +350,7 @@ function WorkoutSession({ onBack }) {
       counter: 0,
       phase: 'UP',
       feedback: '',
-      color: '#10B981',
+      color: '#00df89',
       angle: null,
     });
   }, []);
@@ -345,7 +363,7 @@ function WorkoutSession({ onBack }) {
         counter: 0,
         phase: 'UP',
         feedback: '',
-        color: '#10B981',
+        color: '#00df89',
       }));
     }
   }, []);
@@ -411,17 +429,25 @@ function WorkoutSession({ onBack }) {
     }
   }, [torchOn]);
 
+  const getMobileHeaderTitle = () => {
+    if (currentKey) {
+      const name = EXERCISE_MAP[currentKey]?.name;
+      // Return plural for Squat to Squats to match mockup
+      return name === 'Squat' ? 'SQUATS' : `${name.toUpperCase()}S`;
+    }
+    return 'EXERCISES';
+  };
+
   return (
     <div className="workout">
-      {/* Top Bar */}
+      {/* Responsive Top Bar */}
       <header className="workout__topbar glass">
         <button className="workout__back-btn" onClick={handleBack} id="back-btn">
-          <ArrowLeft size={18} />
-          <span>Back</span>
+          <span>← Back</span>
         </button>
         <div className="workout__topbar-center">
           <div className={`workout__status-dot ${bodyDetected ? 'workout__status-dot--active' : ''}`} />
-          <span className="workout__status-text">
+          <span className="workout__status-text workout__status-text--desktop">
             {status === 'ready'
               ? currentKey === null
                 ? 'SELECT AN EXERCISE TO BEGIN'
@@ -434,6 +460,9 @@ function WorkoutSession({ onBack }) {
               ? 'STARTING CAMERA...'
               : 'ERROR'
             }
+          </span>
+          <span className="workout__status-text workout__status-text--mobile">
+            {getMobileHeaderTitle()}
           </span>
         </div>
         <div className="workout__topbar-right">
@@ -456,13 +485,18 @@ function WorkoutSession({ onBack }) {
           <div className="workout__fps">
             FPS: <span className="workout__fps-value">{fps}</span>
           </div>
+          <div className="workout__header-icons-mobile">
+            <span className="workout__header-icon">🔔</span>
+            <span className="workout__header-avatar">👤</span>
+          </div>
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Main Content Layout */}
       <div className="workout__content">
-        {/* Left Sidebar */}
-        <aside className="workout__sidebar workout__sidebar--left">
+        
+        {/* Left Sidebar (Desktop only) */}
+        <aside className="workout__sidebar workout__sidebar--left workout__sidebar--desktop-only">
           <ExerciseSelector
             currentKey={currentKey}
             onSelect={handleExerciseSwitch}
@@ -477,52 +511,139 @@ function WorkoutSession({ onBack }) {
           </div>
         </aside>
 
-        {/* Camera View */}
-        <main className="workout__camera-wrap">
-          {/* Hidden video element (camera source) */}
-          <video
-            ref={videoRef}
-            className="workout__video"
-            playsInline
-            muted
-          />
+        {/* Dynamic Center View (Adapts to mobile tabs!) */}
+        <div className="workout__center-view">
+          
+          {/* 1. Live Camera / Main Workout Tab */}
+          <div
+            className="workout__camera-tab-content"
+            style={{ display: activeTab === 'camera' ? 'flex' : 'none' }}
+          >
+            <main className="workout__camera-wrap">
+              <video ref={videoRef} className="workout__video" playsInline muted />
+              <canvas ref={canvasRef} className="workout__canvas" />
 
-          {/* Canvas with skeleton overlay */}
-          <canvas
-            ref={canvasRef}
-            className="workout__canvas"
-          />
+              {status !== 'ready' && status !== 'error' && (
+                <div className="workout__loading-overlay">
+                  <div className="workout__spinner-circle" />
+                  <p className="workout__loading-text">
+                    {status === 'initializing' ? 'Starting camera...' : 'Loading AI Pose Model...'}
+                  </p>
+                  <p className="workout__loading-sub">This may take a moment on first load</p>
+                </div>
+              )}
 
-          {/* Loading overlay */}
-          {status !== 'ready' && status !== 'error' && (
-            <div className="workout__loading-overlay">
-              <Loader2 size={48} className="workout__spinner" />
-              <p className="workout__loading-text">
-                {status === 'initializing'
-                  ? 'Starting camera...'
-                  : 'Loading AI pose model (~10MB)...'}
-              </p>
-              <p className="workout__loading-sub">This may take a moment on first load</p>
+              {status === 'error' && (
+                <div className="workout__error-overlay">
+                  <CameraOff size={48} />
+                  <p className="workout__error-text">{errorMsg}</p>
+                  <button className="workout__error-btn" onClick={() => window.location.reload()}>Retry</button>
+                </div>
+              )}
+            </main>
+
+            {/* Mobile Stats Panel Grid (Rendered directly under camera on mobile active tab) */}
+            <div className="workout__mobile-stats-wrap">
+              <StatsPanel
+                exerciseName={stats.name}
+                counter={stats.counter}
+                phase={stats.phase}
+                feedback={stats.feedback}
+                color={stats.color}
+                angle={stats.angle}
+                onReset={handleReset}
+              />
+
+              {/* Latest Session Mockup Widget shown on active tab as in phone mockup */}
+              <div className="workout__mobile-sessions-card">
+                <div className="workout__mobile-sessions-header">LATEST SESSION</div>
+                <div className="workout__mobile-session-item">
+                  <img src="/images/squat-dark.png" alt="Squat Thumbnail" className="workout__mobile-session-thumb" />
+                  <div className="workout__mobile-session-info">
+                    <span className="workout__mobile-session-name">Squat Mock 1</span>
+                    <span className="workout__mobile-session-date">2026-7:10 PM</span>
+                  </div>
+                  <div className="workout__mobile-session-data">
+                    <div className="workout__mobile-session-reps">
+                      <span className="workout__mobile-session-label">REPS TOTAL</span>
+                      <span className="workout__mobile-session-value">14</span>
+                    </div>
+                    <span className="workout__mobile-session-score">100%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Mobile Exercise Selector Tab */}
+          {activeTab === 'selector' && (
+            <div className="workout__mobile-tab-view workout__mobile-tab-view--padded">
+              <ExerciseSelector
+                currentKey={currentKey}
+                onSelect={handleExerciseSwitch}
+                onDeselect={handleDeselect}
+              />
             </div>
           )}
 
-          {/* Error overlay */}
-          {status === 'error' && (
-            <div className="workout__error-overlay">
-              <CameraOff size={48} />
-              <p className="workout__error-text">{errorMsg}</p>
-              <button
-                className="workout__error-btn"
-                onClick={() => window.location.reload()}
-              >
-                Retry
-              </button>
+          {/* 3. Mobile Sessions List Tab */}
+          {activeTab === 'sessions' && (
+            <div className="workout__mobile-tab-view workout__mobile-tab-view--padded">
+              <h2 className="workout__mobile-section-title">WORKOUT SESSIONS</h2>
+              <div className="workout__mobile-sessions-list">
+                <div className="workout__mobile-session-item">
+                  <img src="/images/squat-dark.png" alt="Squat Thumbnail" className="workout__mobile-session-thumb" />
+                  <div className="workout__mobile-session-info">
+                    <span className="workout__mobile-session-name">Squat Session</span>
+                    <span className="workout__mobile-session-date">Today - 08:34 AM</span>
+                  </div>
+                  <div className="workout__mobile-session-data">
+                    <span className="workout__mobile-session-score">14 reps</span>
+                  </div>
+                </div>
+                <div className="workout__mobile-session-item">
+                  <img src="/images/bicep-curl-dark.png" alt="Curl Thumbnail" className="workout__mobile-session-thumb" />
+                  <div className="workout__mobile-session-info">
+                    <span className="workout__mobile-session-name">Bicep Curl Session</span>
+                    <span className="workout__mobile-session-date">Yesterday - 05:20 PM</span>
+                  </div>
+                  <div className="workout__mobile-session-data">
+                    <span className="workout__mobile-session-score">24 reps</span>
+                  </div>
+                </div>
+                <div className="workout__mobile-session-item text-muted">
+                  <p className="workout__empty-history">End of session log history</p>
+                </div>
+              </div>
             </div>
           )}
-        </main>
 
-        {/* Right Sidebar */}
-        <aside className="workout__sidebar workout__sidebar--right">
+          {/* 4. Mobile Profile Tab */}
+          {activeTab === 'profile' && (
+            <div className="workout__mobile-tab-view workout__mobile-tab-view--padded">
+              <div className="workout__profile-card">
+                <div className="workout__profile-avatar">👤</div>
+                <h2 className="workout__profile-name">Muhammad Umer Farooq</h2>
+                <p className="workout__profile-title">Lead Developer & UI Designer</p>
+                <div className="workout__profile-stats">
+                  <div className="workout__profile-stat">
+                    <span>Active Session</span>
+                    <strong>{currentKey ? EXERCISE_MAP[currentKey]?.name : 'None'}</strong>
+                  </div>
+                  <div className="workout__profile-stat">
+                    <span>Rank</span>
+                    <strong>Gym Bro Pro</strong>
+                  </div>
+                </div>
+                <p className="workout__profile-footer">Built with 💪 and Javascript</p>
+              </div>
+            </div>
+          )}
+
+        </div>
+
+        {/* Right Sidebar (Desktop only) */}
+        <aside className="workout__sidebar workout__sidebar--right workout__sidebar--desktop-only">
           <StatsPanel
             exerciseName={stats.name}
             counter={stats.counter}
@@ -534,6 +655,46 @@ function WorkoutSession({ onBack }) {
           />
         </aside>
       </div>
+
+      {/* Mobile Tab Navigation Bar */}
+      <nav className="workout__mobile-nav">
+        <button
+          className={`workout__mobile-nav-btn ${activeTab === 'home' ? 'workout__mobile-nav-btn--active' : ''}`}
+          onClick={handleBack}
+        >
+          <Home size={20} />
+          <span>Home</span>
+        </button>
+        <button
+          className={`workout__mobile-nav-btn ${activeTab === 'selector' ? 'workout__mobile-nav-btn--active' : ''}`}
+          onClick={() => setActiveTab('selector')}
+        >
+          <Dumbbell size={20} />
+          <span>Exercises</span>
+        </button>
+        <button
+          className={`workout__mobile-nav-btn workout__mobile-nav-btn--center ${activeTab === 'camera' ? 'workout__mobile-nav-btn--active' : ''}`}
+          onClick={() => setActiveTab('camera')}
+        >
+          <div className="workout__mobile-nav-plus-circle">
+            <Plus size={24} />
+          </div>
+        </button>
+        <button
+          className={`workout__mobile-nav-btn ${activeTab === 'sessions' ? 'workout__mobile-nav-btn--active' : ''}`}
+          onClick={() => setActiveTab('sessions')}
+        >
+          <BookOpen size={20} />
+          <span>Sessions</span>
+        </button>
+        <button
+          className={`workout__mobile-nav-btn ${activeTab === 'profile' ? 'workout__mobile-nav-btn--active' : ''}`}
+          onClick={() => setActiveTab('profile')}
+        >
+          <User size={20} />
+          <span>Profile</span>
+        </button>
+      </nav>
     </div>
   );
 }

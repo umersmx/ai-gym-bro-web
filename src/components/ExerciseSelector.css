@@ -1,58 +1,61 @@
 /* ============================================
-   Exercise Selector - Orange & White Theme
+   Exercise Selector - Cyber Dark Theme
    ============================================ */
 
 .exercise-selector {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .exercise-selector__title {
   font-family: 'Orbitron', sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--text-muted);
   letter-spacing: 2px;
   padding-left: 4px;
+  text-transform: uppercase;
 }
 
 .exercise-selector__list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .exercise-selector__btn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-sm);
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--text-secondary);
   cursor: pointer;
   transition: all var(--transition-fast);
   font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
 }
 
 .exercise-selector__btn:hover {
-  background: var(--orange-50);
-  border-color: var(--orange-500);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--green-500);
+  color: #ffffff;
 }
 
 .exercise-selector__btn--active {
-  background: var(--orange-100);
-  border-color: var(--orange-500);
-  color: var(--text-primary);
-  box-shadow: 0 0 16px rgba(255, 107, 0, 0.12);
+  background: rgba(0, 223, 137, 0.06);
+  border-color: var(--green-500);
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(0, 223, 137, 0.15), inset 0 0 10px rgba(0, 223, 137, 0.05);
 }
 
 .exercise-selector__icon {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 .exercise-selector__name {
@@ -63,27 +66,28 @@
 
 .exercise-selector__key {
   font-family: 'Orbitron', monospace;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 4px;
-  background: var(--bg-secondary);
+  background: rgba(0, 0, 0, 0.25);
   color: var(--text-muted);
 }
 
 .exercise-selector__btn--active .exercise-selector__key {
-  background: rgba(255, 107, 0, 0.15);
-  color: var(--orange-500);
+  background: rgba(0, 223, 137, 0.15);
+  color: var(--green-500);
 }
 
 .exercise-selector__btn--deselect {
-  border-color: rgba(239, 68, 68, 0.2);
+  border-color: rgba(244, 63, 94, 0.15);
+  background: rgba(244, 63, 94, 0.02);
   color: var(--text-muted);
 }
 
 .exercise-selector__btn--deselect:hover {
-  background: rgba(239, 68, 68, 0.05);
-  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(244, 63, 94, 0.08);
+  border-color: var(--red);
   color: var(--red);
 }
 

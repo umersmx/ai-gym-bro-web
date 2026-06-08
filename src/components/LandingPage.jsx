@@ -4,32 +4,32 @@ import './LandingPage.css';
 
 const FEATURES = [
   {
-    icon: <Target size={28} />,
-    title: 'Define Your Goals',
-    desc: 'Choose your fitness objective: fat loss, muscle gain, endurance, or overall wellness.',
+    icon: <Camera size={24} />,
+    title: 'Real-Time Webcam',
+    desc: 'Uses your device camera to track body movements with AI-powered pose estimation.',
   },
   {
-    icon: <Camera size={28} />,
-    title: 'Real-Time Tracking',
-    desc: 'Your device camera tracks body movements with AI-powered pose detection in real-time.',
+    icon: <Activity size={24} />,
+    title: 'Rep Counting',
+    desc: 'Automatically counts your reps using smart state-machine logic. No manual input needed.',
   },
   {
-    icon: <TrendingUp size={28} />,
-    title: 'Track Your Progress',
-    desc: 'Log your workouts, monitor your reps, and view your progress over time.',
+    icon: <Zap size={24} />,
+    title: 'Form Feedback',
+    desc: 'Get instant corrective feedback when your form needs improvement.',
   },
   {
-    icon: <BarChart3 size={28} />,
-    title: 'Get Form Analysis',
-    desc: 'Our AI system provides instant feedback on your form for every exercise you perform.',
+    icon: <Dumbbell size={24} />,
+    title: '4 Exercises',
+    desc: 'Squat, Bicep Curl, Push-Up, and Shoulder Press — all tracked in real-time.',
   },
 ];
 
 const EXERCISES = [
-  { key: '1', name: 'Squat', icon: '🏋️', color: '#FF6B00', image: '/images/squat.png', instructions: 'Stand sideways to the camera so your full body profile is visible. Ensure clear lighting.' },
-  { key: '2', name: 'Bicep Curl', icon: '💪', color: '#FF8533', image: '/images/bicep-curl.png', instructions: 'Stand sideways. Ensure your arm, torso, and dumbbells are fully visible in the frame.' },
-  { key: '3', name: 'Push-Up', icon: '🫸', color: '#E05E00', image: '/images/pushup.png', instructions: 'Position your camera low to the ground, capturing your entire body side profile from head to toe.' },
-  { key: '4', name: 'Shoulder Press', icon: '🙌', color: '#FF6B00', image: '/images/shoulder-press.png', instructions: 'Face the camera front-on. Ensure your upper body and arms are visible when fully extended upwards.' },
+  { key: '1', name: 'Squat', icon: '🏋️', color: '#00df89', image: '/images/squat-transparent.png' },
+  { key: '2', name: 'Bicep Curl', icon: '💪', color: '#34d399', image: '/images/bicep-curl-transparent.png' },
+  { key: '3', name: 'Push-Up', icon: '🫸', color: '#059669', image: '/images/pushup-transparent.png' },
+  { key: '4', name: 'Shoulder Press', icon: '🙌', color: '#00df89', image: '/images/shoulder-press-transparent.png' },
 ];
 
 const HERO_BADGES = [
@@ -69,7 +69,6 @@ function LandingPage({ onStart }) {
   useEffect(() => {
     async function fetchVisitorCount() {
       try {
-        // Only increment once per browser session
         const alreadyCounted = sessionStorage.getItem('gym-bro-counted');
         const endpoint = alreadyCounted
           ? 'https://abacus.jasoncameron.dev/get/ai-gym-bro-web/visits'
@@ -97,7 +96,7 @@ function LandingPage({ onStart }) {
             <Dumbbell size={20} />
           </div>
           <span className="landing__logo-text">
-            AI GYM<span className="landing__logo-accent">⚡</span>BRO
+            AI <span className="landing__logo-accent">Gymbro</span>
           </span>
         </div>
         <nav className="landing__nav">
@@ -105,7 +104,7 @@ function LandingPage({ onStart }) {
           <a href="#exercises" className="landing__nav-link">Exercises</a>
           <a href="#benefits" className="landing__nav-link">Benefits</a>
         </nav>
-        <button className="landing__signup-btn" onClick={onStart} id="nav-start-btn">
+        <button className="landing__signup-btn" onClick={() => onStart(null)} id="nav-start-btn">
           Start Now
         </button>
       </header>
@@ -114,15 +113,24 @@ function LandingPage({ onStart }) {
       <section className="landing__hero">
         <div className="landing__hero-overlay" />
         <div className="landing__hero-content">
+          <div className="landing__badge">
+            <Zap size={12} className="landing__badge-icon" />
+            <span>Powered by MediaPipe AI</span>
+          </div>
+
           <h1 className="landing__title">
-            Achieve Fitness Goals with Your
+            Your Virtual
             <br />
-            <span className="landing__title-accent">AI GYM⚡BRO</span>
+            <span className="landing__title-gradient">Fitness Spotter</span>
           </h1>
 
-          <button className="landing__cta" onClick={onStart} id="start-webcam-btn">
+          <p className="landing__description">
+            Real-time pose detection, rep counting, and form analysis — all running directly in your browser. No downloads, no servers, just your webcam.
+          </p>
+
+          <button className="landing__cta" onClick={() => onStart(null)} id="start-webcam-btn">
             <Camera size={20} />
-            <span>Get Your Program</span>
+            <span>Start Webcam</span>
             <ChevronRight size={18} />
           </button>
 
@@ -134,80 +142,41 @@ function LandingPage({ onStart }) {
         </div>
       </section>
 
-      {/* Motivational Quote */}
-      <section className="landing__quote-section">
-        <div className="landing__quote-wrap">
-          <span className="landing__quote-icon">✨</span>
-          <p className="landing__quote">
-            Trust the process, even when results feel slow. Every step forward, no matter how small, is part of something bigger than what you see today.
-          </p>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="landing__features" id="how-it-works">
-        <div className="landing__section-header">
-          <h2 className="landing__section-title">
-            <span className="landing__title-bold">How</span> It Works
-          </h2>
-          <p className="landing__section-subtitle">Your Personalized Fitness Roadmap</p>
-        </div>
-        <div className="landing__feature-grid">
-          {FEATURES.map((f, i) => (
-            <div
-              key={i}
-              className="landing__feature-card animate-slide-up"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            >
-              <div className="landing__feature-icon">{f.icon}</div>
-              <h3 className="landing__feature-title">{f.title}</h3>
-              <p className="landing__feature-desc">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-        <div className="landing__feature-cta-wrap">
-          <button className="landing__feature-cta" onClick={onStart}>
-            More About Us
-          </button>
-        </div>
-      </section>
-
-      {/* Exercise Preview */}
+      {/* Supported Exercises */}
       <section className="landing__exercises" id="exercises">
-        <div className="landing__section-header">
-          <h2 className="landing__section-title">
-            <span className="landing__title-bold">Supported</span> Exercises
-          </h2>
-          <p className="landing__section-subtitle">Select an exercise and start tracking</p>
-        </div>
+        <h2 className="landing__exercises-title">Supported Exercises</h2>
         <div className="landing__exercise-grid">
           {EXERCISES.map((ex) => (
             <div
               key={ex.key}
               className="landing__exercise-card"
-              style={{ '--card-accent': ex.color }}
+              onClick={() => onStart(ex.key)}
             >
               <div className="landing__exercise-image-wrap">
-                <img src={ex.image} alt={`${ex.name} position`} className="landing__exercise-img" />
-                <div className="landing__exercise-camera-badge">
-                  <Camera size={14} />
-                  <span>Camera Ready</span>
-                </div>
+                <img src={ex.image} alt={ex.name} className="landing__exercise-img" />
               </div>
-              <p className="landing__exercise-instructions">{ex.instructions}</p>
+              <div className="landing__exercise-info">
+                <span className="landing__exercise-icon">{ex.icon}</span>
+                <span className="landing__exercise-name">{ex.name}</span>
+              </div>
+              <span className="landing__exercise-key">Press {ex.key}</span>
+            </div>
+          ))}
+        </div>
+      </section>
 
-              <div className="landing__exercise-card-bottom">
-                <div className="landing__exercise-title-wrap">
-                  <span className="landing__exercise-icon">{ex.icon}</span>
-                  <span className="landing__exercise-name">{ex.name}</span>
-                </div>
-                <div className="landing__exercise-actions">
-                  <span className="landing__exercise-key">Press {ex.key}</span>
-                  <button className="landing__exercise-start" onClick={onStart}>
-                    Start
-                  </button>
-                </div>
-              </div>
+      {/* How It Works */}
+      <section className="landing__features" id="how-it-works">
+        <h2 className="landing__features-title">How It Works</h2>
+        <div className="landing__feature-grid">
+          {FEATURES.map((f, i) => (
+            <div
+              key={i}
+              className="landing__feature-card"
+            >
+              <div className="landing__feature-icon">{f.icon}</div>
+              <h3 className="landing__feature-title">{f.title}</h3>
+              <p className="landing__feature-desc">{f.desc}</p>
             </div>
           ))}
         </div>
@@ -217,7 +186,7 @@ function LandingPage({ onStart }) {
       <section className="landing__benefits" id="benefits">
         <div className="landing__section-header">
           <h2 className="landing__section-title">
-            Key <span className="landing__title-orange">Benefits</span>
+            Key <span className="landing__title-green">Benefits</span>
           </h2>
           <p className="landing__section-subtitle">Why AI GYM BRO Works</p>
         </div>
@@ -241,7 +210,7 @@ function LandingPage({ onStart }) {
           </div>
           <div className="landing__footer-logo">
             <span className="landing__logo-text landing__logo-text--footer">
-              AI GYM<span className="landing__logo-accent">⚡</span>BRO
+              AI <span className="landing__logo-accent">Gymbro</span>
             </span>
           </div>
           <div className="landing__footer-links">
