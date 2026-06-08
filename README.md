@@ -236,14 +236,28 @@ npx vercel --prod
         <img src="https://github.com/umersmx.png" width="80px;" alt="Umer Farooq"/><br />
         <sub><b>Umer Farooq</b></sub>
       </a><br />
-      <sub>Lead Developer</sub>
+      <sub>Full-Stack Engineer</sub>
     </td>
     <td align="center">
-      <a href="https://github.com/arks-luxe">
-        <img src="https://github.com/arks-luxe.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
+      <a href="https://github.com/AbdulRahmanKSaeed">
+        <img src="https://github.com/AbdulRahmanKSaeed.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
         <sub><b>Abdur Rehman K. Saeed</b></sub>
       </a><br />
       <sub>Group Lead</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/touchibhai">
+        <img src="https://github.com/touchibhai.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
+        <sub><b>Kamrosh Butt</b></sub>
+      </a><br />
+      <sub>ML Engineer</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Rao-UsmanJaved">
+        <img src="https://github.com/Rao-UsmanJaved.png" width="80px;" alt="Abdur Rehman K. Saeed"/><br />
+        <sub><b>Usman Javed</b></sub>
+      </a><br />
+      <sub>QA Engineer</sub>
     </td>
   </tr>
 </table>
