@@ -285,45 +285,6 @@
   transform: translateY(-3px);
 }
 
-.landing__cta--secondary {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  box-shadow: 
-    0 6px 0 rgba(255, 255, 255, 0.05), 
-    0 12px 24px rgba(0, 0, 0, 0.2);
-  margin-left: 16px;
-}
-
-.landing__cta--secondary::before {
-  display: none; /* remove gradient sweep */
-}
-
-.landing__cta--secondary::after {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.landing__cta--secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--green-500);
-  color: var(--green-500);
-  box-shadow: 
-    0 8px 0 rgba(255, 255, 255, 0.05), 
-    0 18px 30px rgba(0, 223, 137, 0.1), 
-    0 0 30px rgba(0, 223, 137, 0.15);
-}
-
-.landing__cta--secondary:active {
-  box-shadow: 
-    0 0px 0 rgba(255, 255, 255, 0.05), 
-    0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.landing__cta-icon-planner {
-  color: var(--green-500);
-  animation: pulse-glow-badge 2s infinite alternate;
-}
-
 /* Continuous sweep arpeggio light effect */
 .landing__cta::before {
   content: '';
@@ -381,6 +342,46 @@
     0 0px 0 #00ad6a, 
     0 4px 10px rgba(0, 223, 137, 0.15);
   transition-duration: 0.05s;
+}
+
+/* Secondary CTA Button (AI Planner) — overrides primary hover settings */
+.landing__cta--secondary {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  box-shadow: 
+    0 6px 0 rgba(255, 255, 255, 0.05), 
+    0 12px 24px rgba(0, 0, 0, 0.2);
+  margin-left: 16px;
+}
+
+.landing__cta--secondary::before {
+  display: none; /* remove gradient sweep */
+}
+
+.landing__cta--secondary::after {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.landing__cta--secondary:hover {
+  background: rgba(0, 223, 137, 0.08);
+  border-color: var(--green-500);
+  color: var(--green-500);
+  box-shadow: 
+    0 8px 0 rgba(0, 223, 137, 0.05), 
+    0 18px 30px rgba(0, 223, 137, 0.1), 
+    0 0 35px rgba(0, 223, 137, 0.2);
+}
+
+.landing__cta--secondary:active {
+  box-shadow: 
+    0 0px 0 rgba(0, 223, 137, 0.05), 
+    0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.landing__cta-icon-planner {
+  color: var(--green-500);
+  animation: pulse-glow-badge 2s infinite alternate;
 }
 
 /* CTA Icon Motion */

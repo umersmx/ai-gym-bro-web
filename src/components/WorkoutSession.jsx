@@ -5,7 +5,6 @@ import { ExerciseDetector, EXERCISE_MAP } from '../lib/exercises';
 import { calculateAngle } from '../lib/utils';
 import ExerciseSelector from './ExerciseSelector';
 import StatsPanel from './StatsPanel';
-import ConfettiCanvas from './ConfettiCanvas';
 import AngleChart from './AngleChart';
 import './WorkoutSession.css';
 
@@ -57,18 +56,8 @@ function WorkoutSession({ initialExerciseKey = null, initialTargetGoal = null, o
   const [facingMode, setFacingMode] = useState('user');
   const [torchOn, setTorchOn] = useState(false);
   const [targetGoal, setTargetGoal] = useState(initialTargetGoal !== null ? initialTargetGoal : 10); // default goal: 10 reps
-  const [celebrating, setCelebrating] = useState(false);
-  const celebratedForSet = useRef(false);
   const [isSimulating, setIsSimulating] = useState(false);
   const isSimulatingRef = useRef(false);
-
-  // Trigger celebration on matching target goal
-  useEffect(() => {
-    if (targetGoal > 0 && stats.counter >= targetGoal && !celebratedForSet.current) {
-      celebratedForSet.current = true;
-      setCelebrating(true);
-    }
-  }, [stats.counter, targetGoal]);
 
   // Initialize camera and pose detector
   useEffect(() => {
@@ -516,7 +505,6 @@ function WorkoutSession({ initialExerciseKey = null, initialTargetGoal = null, o
         color: '#00df89',
         angle: null,
       });
-      celebratedForSet.current = false;
     }
   }, [saveCompletedSet]);
 
@@ -539,7 +527,6 @@ function WorkoutSession({ initialExerciseKey = null, initialTargetGoal = null, o
       color: '#00df89',
       angle: null,
     });
-    celebratedForSet.current = false;
   }, [saveCompletedSet]);
 
   const handleReset = useCallback(() => {
@@ -557,7 +544,6 @@ function WorkoutSession({ initialExerciseKey = null, initialTargetGoal = null, o
         feedback: '',
         color: '#00df89',
       }));
-      celebratedForSet.current = false;
     }
   }, [saveCompletedSet]);
 
@@ -842,9 +828,7 @@ function WorkoutSession({ initialExerciseKey = null, initialTargetGoal = null, o
         </aside>
       </div>
 
-      {celebrating && (
-        <ConfettiCanvas onComplete={() => setCelebrating(false)} />
-      )}
+      
     </div>
   );
 }
