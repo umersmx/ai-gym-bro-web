@@ -1,0 +1,644 @@
+/* ============================================
+   AI Workout Planner Styles (Cyber Glassmorphism)
+   ============================================ */
+
+.planner {
+  min-height: 100vh;
+  position: relative;
+  padding: 40px 20px 80px;
+  background: transparent;
+}
+
+.planner__container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ============ HEADER ============ */
+.planner__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  min-height: 70px;
+}
+
+.planner__back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.planner__back-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: translateX(-2px);
+}
+
+.planner__header-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.planner__logo-icon {
+  color: var(--green-500);
+  animation: pulse-glow-badge 2s infinite alternate;
+}
+
+.planner__title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+.planner__reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  border-radius: var(--radius-full);
+  background: rgba(244, 63, 94, 0.04);
+  color: #f43f5e;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.planner__reset-btn:hover {
+  background: rgba(244, 63, 94, 0.1);
+  border-color: rgba(244, 63, 94, 0.4);
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.15);
+}
+
+/* ============ WIZARD WORKOUT PLAN VIEW ============ */
+.planner__plan-view {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Summary Card */
+.planner__summary-card {
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(0, 223, 137, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+  text-align: left;
+}
+
+.planner__summary-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.planner__summary-icon {
+  color: var(--green-500);
+}
+
+.planner__plan-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.planner__plan-bio {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.planner__meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.planner__meta-tag {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+}
+
+/* Exercises Schedule */
+.planner__exercises-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: left;
+}
+
+.planner__section-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+}
+
+.planner__exercises-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.planner__exercise-card {
+  padding: 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.planner__exercise-card--completed {
+  border-color: rgba(0, 223, 137, 0.3);
+  background: rgba(0, 223, 137, 0.02);
+}
+
+.planner__ex-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
+
+.planner__ex-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.planner__exercise-card--completed .planner__ex-icon-wrap {
+  background: rgba(0, 223, 137, 0.05);
+  border-color: rgba(0, 223, 137, 0.2);
+}
+
+.planner__ex-icon {
+  font-size: 1.6rem;
+}
+
+.planner__ex-details {
+  flex: 1;
+}
+
+.planner__ex-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.planner__ex-specs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.planner__ex-rest-span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.planner__ex-badge-complete {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(0, 223, 137, 0.08);
+  border: 1px solid rgba(0, 223, 137, 0.25);
+  border-radius: var(--radius-full);
+  color: var(--green-400);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  animation: pulse-glow-badge 2.5s infinite alternate;
+}
+
+.planner__ex-tip {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+  border-left: 3px solid var(--green-500);
+}
+
+.planner__exercise-card--completed .planner__ex-tip {
+  border-left-color: rgba(0, 223, 137, 0.3);
+  opacity: 0.8;
+}
+
+/* Sets Progress Tracker Pills */
+.planner__tracker-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.planner__tracker-pills-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.planner__tracker-ratio {
+  color: var(--green-400);
+  font-family: 'Orbitron', sans-serif;
+}
+
+.planner__tracker-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.planner__set-pill {
+  flex: 1;
+  min-width: 110px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.planner__set-pill--done {
+  background: rgba(0, 223, 137, 0.08);
+  border: 1px solid rgba(0, 223, 137, 0.2);
+  color: var(--green-400);
+}
+
+.planner__set-pill--active {
+  background: var(--green-500);
+  color: #090d16;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 223, 137, 0.25);
+}
+
+.planner__set-pill--active:hover {
+  background: #00ff9d;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 223, 137, 0.4);
+}
+
+.planner__set-pill--active:active {
+  transform: translateY(1px);
+}
+
+.planner__set-pill--pending {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+}
+
+/* ============ INTAKE FORM WIZARD ============ */
+.planner__wizard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Progress bar indicators */
+.planner__progress-bar {
+  height: 6px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-full);
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.planner__progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--green-500), #00ff9d);
+  box-shadow: 0 0 12px rgba(0, 223, 137, 0.4);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.planner__steps-dots {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.planner__step-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #121824;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.planner__step-dot--active {
+  border-color: var(--green-500);
+  color: var(--green-400);
+  box-shadow: 0 0 8px rgba(0, 223, 137, 0.3);
+}
+
+/* Wizard card content */
+.planner__wizard-card {
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+
+.planner__step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  text-align: left;
+}
+
+.planner__step-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.planner__step-num {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--green-500);
+  letter-spacing: 1px;
+}
+
+.planner__step-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.planner__step-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* Selection Cards Grid */
+.planner__options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.planner__option-card {
+  background: rgba(30, 41, 59, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: 'Inter', sans-serif;
+}
+
+.planner__option-card:hover {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.planner__option-card--active {
+  background: rgba(0, 223, 137, 0.05);
+  border-color: var(--green-500);
+  box-shadow: 0 0 16px rgba(0, 223, 137, 0.08);
+}
+
+.planner__option-card--active .planner__option-label {
+  color: var(--green-400);
+}
+
+.planner__option-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+  transition: color 0.3s ease;
+}
+
+.planner__option-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Wizard Footer buttons */
+.planner__wizard-footer {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding-top: 24px;
+  margin-top: 8px;
+}
+
+.planner__wizard-btn {
+  padding: 12px 28px;
+  border-radius: var(--radius-full);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.planner__wizard-btn--prev {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-secondary);
+}
+
+.planner__wizard-btn--prev:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+.planner__wizard-btn--prev:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.planner__wizard-btn--next {
+  border: 1px solid rgba(0, 223, 137, 0.25);
+  background: rgba(0, 223, 137, 0.05);
+  color: var(--green-500);
+}
+
+.planner__wizard-btn--next:hover:not(:disabled) {
+  background: rgba(0, 223, 137, 0.12);
+  border-color: rgba(0, 223, 137, 0.5);
+  color: #ffffff;
+}
+
+.planner__wizard-btn--next:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+}
+
+.planner__wizard-btn--generate {
+  border: none;
+  background: var(--green-500);
+  color: #090d16;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(0, 223, 137, 0.25);
+}
+
+.planner__wizard-btn--generate:hover:not(:disabled) {
+  background: #00ff9d;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 223, 137, 0.4);
+}
+
+.planner__wizard-btn--generate:disabled {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Disclaimer */
+.planner__disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  background: rgba(245, 158, 11, 0.03);
+  text-align: left;
+}
+
+.planner__disclaimer-icon {
+  color: #f59e0b;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.planner__disclaimer p {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* Animations */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ RESPONSIVE LAYOUTS ============ */
+@media (max-width: 768px) {
+  .planner__options-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .planner__wizard-card {
+    padding: 24px 20px;
+    gap: 24px;
+  }
+
+  .planner__summary-card {
+    padding: 24px 20px;
+  }
+
+  .planner__exercise-card {
+    padding: 20px 16px;
+  }
+
+  .planner__ex-header {
+    align-items: flex-start;
+  }
+
+  .planner__ex-badge-complete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 3px 8px;
+    font-size: 0.65rem;
+  }
+}

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Camera, Dumbbell, Activity, Zap, ChevronRight, Target, TrendingUp, BarChart3, Shield } from 'lucide-react';
+import { Camera, Dumbbell, Activity, Zap, ChevronRight, Target, TrendingUp, BarChart3, Shield, Sparkles } from 'lucide-react';
 import { use3DTilt } from '../hooks/use3DTilt';
 import './LandingPage.css';
 
@@ -115,6 +115,7 @@ function LandingPage({ onStart, onNavigate }) {
   const exercisesRef = useScrollReveal({ threshold: 0.1 });
   const featuresRef = useScrollReveal({ threshold: 0.1 });
   const benefitsRef = useScrollReveal({ threshold: 0.1 });
+  const promoRef = useScrollReveal({ threshold: 0.1 });
   const footerRef = useScrollReveal({ threshold: 0.1 });
 
   // Increment visitor count in backend (analytics)
@@ -167,6 +168,7 @@ function LandingPage({ onStart, onNavigate }) {
           <a href="#how-it-works" className="landing__nav-link" onClick={(e) => handleNavClick(e, 'how-it-works')}>How It Works</a>
           <a href="#exercises" className="landing__nav-link" onClick={(e) => handleNavClick(e, 'exercises')}>Exercises</a>
           <a href="#benefits" className="landing__nav-link" onClick={(e) => handleNavClick(e, 'benefits')}>Benefits</a>
+          <a href="#planner" className="landing__nav-link" onClick={(e) => { e.preventDefault(); onNavigate('planner'); }}>AI Planner</a>
           <a href="#history" className="landing__nav-link" onClick={(e) => { e.preventDefault(); onNavigate('history'); }}>History</a>
         </nav>
         <button className="landing__signup-btn" onClick={() => onStart(null)} id="nav-start-btn">
@@ -197,6 +199,11 @@ function LandingPage({ onStart, onNavigate }) {
             <button className="landing__cta" onClick={() => onStart(null)} id="start-webcam-btn">
               <Camera size={20} className="landing__cta-icon-camera" />
               <span>Start Webcam</span>
+              <ChevronRight size={18} className="landing__cta-icon-chevron" />
+            </button>
+            <button className="landing__cta landing__cta--secondary" onClick={() => onNavigate('planner')} id="start-planner-btn">
+              <Sparkles size={20} className="landing__cta-icon-planner" />
+              <span>AI Workout Planner</span>
               <ChevronRight size={18} className="landing__cta-icon-chevron" />
             </button>
           </div>
@@ -268,6 +275,33 @@ function LandingPage({ onStart, onNavigate }) {
               <p className="landing__benefit-desc">{b.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* AI Planner Promo Banner */}
+      <section className="landing__planner-promo reveal" id="planner-promo" ref={promoRef}>
+        <div className="landing__planner-promo-card glass">
+          <div className="landing__planner-promo-content">
+            <div className="landing__planner-promo-badge">
+              <Sparkles size={12} className="landing__planner-promo-badge-icon" />
+              <span>Personalized Routines</span>
+            </div>
+            <h2 className="landing__planner-promo-title">
+              Ready for a <span className="landing__title-gradient">Structured Workout Plan?</span>
+            </h2>
+            <p className="landing__planner-promo-desc">
+              Tell our virtual planner your age, fitness experience, and available equipment. We'll generate a custom workout routine tailored to your joints and fitness goals, with direct webcam-spotter integration.
+            </p>
+            <button className="landing__planner-promo-btn" onClick={() => onNavigate('planner')} id="promo-planner-btn">
+              <Sparkles size={18} />
+              <span>Create My Plan</span>
+              <ChevronRight size={16} />
+            </button>
+          </div>
+          <div className="landing__planner-promo-illustration">
+            <div className="landing__planner-promo-orb" />
+            <div className="landing__planner-promo-dumbbell">🏋️‍♂️</div>
+          </div>
         </div>
       </section>
 

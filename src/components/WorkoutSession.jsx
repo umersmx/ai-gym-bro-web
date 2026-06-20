@@ -9,7 +9,7 @@ import ConfettiCanvas from './ConfettiCanvas';
 import AngleChart from './AngleChart';
 import './WorkoutSession.css';
 
-function WorkoutSession({ initialExerciseKey = null, onBack }) {
+function WorkoutSession({ initialExerciseKey = null, initialTargetGoal = null, onBack }) {
   // Refs
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -56,7 +56,7 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
   const [bodyDetected, setBodyDetected] = useState(false);
   const [facingMode, setFacingMode] = useState('user');
   const [torchOn, setTorchOn] = useState(false);
-  const [targetGoal, setTargetGoal] = useState(10); // default goal: 10 reps
+  const [targetGoal, setTargetGoal] = useState(initialTargetGoal !== null ? initialTargetGoal : 10); // default goal: 10 reps
   const [celebrating, setCelebrating] = useState(false);
   const celebratedForSet = useRef(false);
   const [isSimulating, setIsSimulating] = useState(false);

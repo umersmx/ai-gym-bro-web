@@ -4,6 +4,22 @@ import './AngleChart.css';
 function AngleChart({ angle, color, height = 75 }) {
   const canvasRef = useRef(null);
   const angleHistoryRef = useRef([]);
+  const sizeRef = useRef({ w: 300, h: 75 });
+
+  // Measure canvas dimensions asynchronously to avoid forced synchronous layouts (thrashing)
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const observer = new ResizeObserver((entries) => {
+      if (!entries || entries.length === 0) return;
+      const { width, height } = entries[0].contentRect;
+      sizeRef.current = { w: width, h: height };
+    });
+
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (angle === null || angle === undefined) {
@@ -33,8 +49,8 @@ function AngleChart({ angle, color, height = 75 }) {
 
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
+    const { w, h } = sizeRef.current;
+    if (w === 0 || h === 0) return;
 
     // Set correct dimensions for high-DPI displays
     if (canvas.width !== w * dpr || canvas.height !== h * dpr) {

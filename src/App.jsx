@@ -3,6 +3,7 @@ import LandingPage from './components/LandingPage';
 import WorkoutSession from './components/WorkoutSession';
 import VisitsPage from './components/VisitsPage';
 import HistoryPage from './components/HistoryPage';
+import WorkoutPlanner from './components/WorkoutPlanner';
 import SparkleBackground from './components/SparkleBackground';
 import './App.css';
 
@@ -14,6 +15,7 @@ function App() {
     return 'landing';
   });
   const [selectedExerciseKey, setSelectedExerciseKey] = useState(null);
+  const [selectedTargetGoal, setSelectedTargetGoal] = useState(null);
   const [transitioning, setTransitioning] = useState(false);
   const [displayPage, setDisplayPage] = useState(page);
   const pageRef = useRef(null);
@@ -29,15 +31,14 @@ function App() {
   }, []);
 
   // Smooth page transition helper
-  const navigateTo = useCallback((nextPage, exerciseKey = null) => {
+  const navigateTo = useCallback((nextPage, exerciseKey = null, targetGoal = null) => {
     if (transitioning) return;
     setTransitioning(true);
 
     // Start exit animation
     setTimeout(() => {
-      if (exerciseKey !== undefined) {
-        setSelectedExerciseKey(exerciseKey);
-      }
+      setSelectedExerciseKey(exerciseKey);
+      setSelectedTargetGoal(targetGoal);
       setPage(nextPage);
       setDisplayPage(nextPage);
       setTransitioning(false);
@@ -46,11 +47,11 @@ function App() {
 
   const goToLanding = () => {
     window.location.hash = '';
-    navigateTo('landing', null);
+    navigateTo('landing', null, null);
   };
 
-  const startWorkout = (exerciseKey = null) => {
-    navigateTo('workout', exerciseKey);
+  const startWorkout = (exerciseKey = null, targetGoal = null) => {
+    navigateTo('workout', exerciseKey, targetGoal);
   };
 
   return (
@@ -75,9 +76,15 @@ function App() {
         {displayPage === 'visits' ? (
           <VisitsPage onBack={goToLanding} />
         ) : displayPage === 'workout' ? (
-          <WorkoutSession initialExerciseKey={selectedExerciseKey} onBack={goToLanding} />
+          <WorkoutSession 
+            initialExerciseKey={selectedExerciseKey} 
+            initialTargetGoal={selectedTargetGoal} 
+            onBack={goToLanding} 
+          />
         ) : displayPage === 'history' ? (
           <HistoryPage onBack={goToLanding} />
+        ) : displayPage === 'planner' ? (
+          <WorkoutPlanner onBack={goToLanding} onStartWorkout={startWorkout} />
         ) : (
           <LandingPage onStart={startWorkout} onNavigate={navigateTo} />
         )}
