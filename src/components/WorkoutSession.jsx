@@ -6,6 +6,7 @@ import { calculateAngle } from '../lib/utils';
 import ExerciseSelector from './ExerciseSelector';
 import StatsPanel from './StatsPanel';
 import ConfettiCanvas from './ConfettiCanvas';
+import AngleChart from './AngleChart';
 import './WorkoutSession.css';
 
 function WorkoutSession({ initialExerciseKey = null, onBack }) {
@@ -50,6 +51,8 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
   const [targetGoal, setTargetGoal] = useState(10); // default goal: 10 reps
   const [celebrating, setCelebrating] = useState(false);
   const celebratedForSet = useRef(false);
+  const [isSimulating, setIsSimulating] = useState(false);
+  const isSimulatingRef = useRef(false);
 
   // Trigger celebration on matching target goal
   useEffect(() => {
@@ -169,6 +172,98 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
 
       canvas.width = w;
       canvas.height = h;
+
+      if (isSimulatingRef.current) {
+        setBodyDetected(true);
+        const timestamp = performance.now();
+        // Simulate a smooth rep cycle: a sine wave oscillating between 35° and 165°
+        // Cycle time: 4.5 seconds per rep (frequency = 2 * PI / 4500)
+        const period = 4500;
+        const angleValue = 100 + Math.sin((timestamp / period) * Math.PI * 2) * 65;
+
+        // Draw simulation overlay on canvas
+        ctx.fillStyle = 'rgba(0, 223, 137, 0.12)';
+        ctx.fillRect(0, 0, w, h);
+        
+        ctx.strokeStyle = '#00df89';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(0, 0, w, h);
+
+        ctx.font = 'bold 24px Orbitron, sans-serif';
+        ctx.fillStyle = '#00df89';
+        ctx.textAlign = 'center';
+        ctx.fillText('SIMULATION ACTIVE', w / 2, 40);
+
+        if (engine && engine.currentExercise) {
+          // Feed simulated angles into the engine
+          const result = engine.update(angleValue, angleValue);
+          setStats(result);
+
+          // Draw a mock visual arm/leg angle on canvas
+          const cx = w / 2, cy = h / 2 + 30;
+          const len = 100;
+          const r1 = (angleValue * Math.PI) / 180;
+          
+          // Joint 1: center
+          // Joint 2: up
+          const x1 = cx;
+          const y1 = cy - len;
+          // Joint 3: angled
+          const x2 = cx + len * Math.sin(r1);
+          const y2 = cy - len * Math.cos(r1);
+
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(cx, cy);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+
+          // Draw joint circles
+          const drawJoint = (x, y, jointColor) => {
+            ctx.beginPath();
+            ctx.arc(x, y, 10, 0, 2 * Math.PI);
+            ctx.fillStyle = jointColor;
+            ctx.fill();
+          };
+          drawJoint(x1, y1, '#f43f5e');
+          drawJoint(cx, cy, '#f59e0b');
+          drawJoint(x2, y2, '#f43f5e');
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 22px Orbitron, sans-serif';
+          ctx.fillText(`${Math.round(angleValue)}°`, cx, cy + 45);
+
+          // Record form quality ticks (same logic as actual loop)
+          if (result.feedback) {
+            const isWarning = result.color === '#F59E0B' || result.color === '#f59e0b' ||
+                              result.feedback === 'LOWER!' || result.feedback === 'CURL MORE!' ||
+                              result.feedback === 'GO LOWER!' || result.feedback === 'EXTEND FULLY!';
+            const score = isWarning ? 70 : 100;
+            formQualityTicksRef.current.push(score);
+          }
+        } else {
+          setStats(prev => ({
+            ...prev,
+            name: 'SELECT EXERCISE',
+            feedback: 'Pick an exercise to start simulating',
+            color: '#00df89',
+          }));
+        }
+
+        // FPS calculation
+        frameCount++;
+        const now = performance.now();
+        if (now - lastFpsUpdate >= 1000) {
+          setFps(frameCount);
+          frameCount = 0;
+          lastFpsUpdate = now;
+        }
+
+        animFrameRef.current = requestAnimationFrame(detectFrame);
+        return;
+      }
 
       // Draw video frame on canvas (mirror for front camera)
       if (facingModeRef.current === 'user') {
@@ -426,6 +521,7 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
   }, [stats.counter, stats.name, saveCompletedSet]);
 
   const handleBack = useCallback(() => {
+    isSimulatingRef.current = false;
     if (stats.counter > 0 && stats.name !== 'SELECT EXERCISE') {
       saveCompletedSet(stats.name, stats.counter);
     }
@@ -441,6 +537,20 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
     }
     onBack();
   }, [stats.counter, stats.name, saveCompletedSet, onBack]);
+
+  const toggleSimulation = useCallback(() => {
+    setIsSimulating(prev => {
+      const next = !prev;
+      isSimulatingRef.current = next;
+      if (next) {
+        setBodyDetected(true);
+        setStatus('ready');
+      } else {
+        setBodyDetected(false);
+      }
+      return next;
+    });
+  }, []);
 
   const handleFlipCamera = useCallback(async () => {
     const newMode = facingModeRef.current === 'user' ? 'environment' : 'user';
@@ -527,6 +637,14 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
           </span>
         </div>
         <div className="workout__topbar-right">
+          <button
+            className={`workout__sim-btn ${isSimulating ? 'workout__sim-btn--active' : ''}`}
+            onClick={toggleSimulation}
+            title={isSimulating ? 'Stop Simulation' : 'Simulate Workout Reps'}
+            id="sim-btn"
+          >
+            <span>{isSimulating ? '⏹️ Stop Sim' : '▶️ Simulate'}</span>
+          </button>
           <button
             className={`workout__torch-btn ${torchOn ? 'workout__torch-btn--active' : ''}`}
             onClick={handleToggleTorch}
@@ -640,6 +758,17 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
                 {stats.feedback || 'POSITION YOUR ENTIRE BODY IN CAMERA FRAME'}
               </div>
             </div>
+
+            {/* Mobile Angle Chart */}
+            {stats.angle !== null && stats.angle !== undefined && (
+              <div className="workout__mobile-chart-card glass" style={{ borderColor: stats.color + '30' }}>
+                <div className="workout__mobile-chart-header">
+                  <span className="workout__mobile-chart-label">ANGLE PROGRESSION</span>
+                  <span className="workout__mobile-chart-val" style={{ color: stats.color }}>{Math.round(stats.angle)}°</span>
+                </div>
+                <AngleChart angle={stats.angle} color={stats.color} height={60} />
+              </div>
+            )}
 
             {/* All Exercises List */}
             <div className="workout__mobile-exercise-selector-wrap">

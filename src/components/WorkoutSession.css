@@ -150,6 +150,37 @@
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.workout__sim-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 223, 137, 0.25);
+  background: rgba(0, 223, 137, 0.05);
+  color: var(--green-400);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-right: 8px;
+}
+
+.workout__sim-btn:hover {
+  background: var(--green-500);
+  border-color: var(--green-500);
+  color: #090d16;
+  box-shadow: 0 0 16px rgba(0, 223, 137, 0.4);
+}
+
+.workout__sim-btn--active {
+  background: var(--red) !important;
+  border-color: var(--red) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.5) !important;
+}
+
 .workout__header-icons-mobile {
   display: none;
 }
@@ -880,5 +911,38 @@
     height: 100%;
     border-radius: var(--radius-full);
     transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .workout__mobile-chart-card {
+    background: rgba(30, 41, 59, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .workout__mobile-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .workout__mobile-chart-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+
+  .workout__mobile-chart-val {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
   }
 }

@@ -1,4 +1,5 @@
 import { ArrowUp, ArrowDown, RotateCcw } from 'lucide-react';
+import AngleChart from './AngleChart';
 import './StatsPanel.css';
 
 function StatsPanel({ exerciseName, counter, phase, feedback, color, angle, onReset, targetGoal, setTargetGoal }) {
@@ -96,11 +97,14 @@ function StatsPanel({ exerciseName, counter, phase, feedback, color, angle, onRe
         {phase === 'UP' ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
       </div>
 
-      {/* Angle Display */}
+      {/* Angle Display & Live Chart */}
       {angle !== null && angle !== undefined && (
         <div className="stats-panel__angle-wrap">
-          <span className="stats-panel__angle-label">FORM ANGLE</span>
-          <span className="stats-panel__angle-value">{Math.round(angle)}°</span>
+          <div className="stats-panel__angle-header">
+            <span className="stats-panel__angle-label">FORM ANGLE</span>
+            <span className="stats-panel__angle-value">{Math.round(angle)}°</span>
+          </div>
+          <AngleChart angle={angle} color={color} height={85} />
         </div>
       )}
 
