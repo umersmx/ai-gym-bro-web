@@ -1,8 +1,9 @@
+import { memo } from 'react';
 import { X } from 'lucide-react';
 import { EXERCISE_MAP } from '../lib/exercises';
 import './ExerciseSelector.css';
 
-function ExerciseSelector({ currentKey, onSelect, onDeselect }) {
+const ExerciseSelector = memo(function ExerciseSelector({ currentKey, onSelect, onDeselect }) {
   return (
     <div className="exercise-selector">
       <h3 className="exercise-selector__title">SELECT EXERCISE</h3>
@@ -34,6 +35,6 @@ function ExerciseSelector({ currentKey, onSelect, onDeselect }) {
       </div>
     </div>
   );
-}
+});
 
 export default ExerciseSelector;

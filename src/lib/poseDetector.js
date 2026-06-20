@@ -49,6 +49,10 @@ export class PoseDetector {
      *   0.5–0.7 = sweet spot for real-time exercise tracking
      */
     this.smoothingAlpha = 0.6;
+
+    // Offscreen canvas elements to downscale input video frames for faster inference
+    this.offscreenCanvas = null;
+    this.offscreenCtx = null;
   }
 
   /**
@@ -91,7 +95,36 @@ export class PoseDetector {
     if (!this.landmarker || !this.isReady) return null;
 
     try {
-      const result = this.landmarker.detectForVideo(video, timestamp);
+      // Downscale input frames to speed up WASM/GPU execution
+      const targetMaxDim = 320;
+      let targetW = 320;
+      let targetH = 240;
+
+      if (video.videoWidth && video.videoHeight) {
+        const aspect = video.videoWidth / video.videoHeight;
+        if (aspect >= 1) {
+          targetW = targetMaxDim;
+          targetH = Math.round(targetMaxDim / aspect);
+        } else {
+          targetH = targetMaxDim;
+          targetW = Math.round(targetMaxDim * aspect);
+        }
+      }
+
+      if (!this.offscreenCanvas) {
+        this.offscreenCanvas = document.createElement('canvas');
+        this.offscreenCanvas.width = targetW;
+        this.offscreenCanvas.height = targetH;
+        this.offscreenCtx = this.offscreenCanvas.getContext('2d');
+      } else if (this.offscreenCanvas.width !== targetW || this.offscreenCanvas.height !== targetH) {
+        this.offscreenCanvas.width = targetW;
+        this.offscreenCanvas.height = targetH;
+      }
+
+      this.offscreenCtx.drawImage(video, 0, 0, targetW, targetH);
+
+      // Run pose detection on the small downscaled canvas
+      const result = this.landmarker.detectForVideo(this.offscreenCanvas, timestamp);
       this.lastResult = result;
 
       if (result.landmarks && result.landmarks.length > 0) {
@@ -156,9 +189,10 @@ export class PoseDetector {
 
     const lm = this.landmarks;
 
-    // Draw connections (skeleton lines)
+    // Consolidate skeleton lines into a single path to minimize stroke draw calls
     ctx.strokeStyle = '#00FFFF';
     ctx.lineWidth = 2;
+    ctx.beginPath();
     for (const [startIdx, endIdx] of POSE_CONNECTIONS) {
       if (startIdx < lm.length && endIdx < lm.length) {
         const a = lm[startIdx];
@@ -169,23 +203,23 @@ export class PoseDetector {
         const y2 = b.y * height;
 
         if ((x1 > 0 || y1 > 0) && (x2 > 0 || y2 > 0)) {
-          ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
-          ctx.stroke();
         }
       }
     }
+    ctx.stroke();
 
-    // Draw landmark points
+    // Consolidate landmark points into a single path for high-performance rendering
+    ctx.fillStyle = '#10B981';
+    ctx.beginPath();
     for (const point of lm) {
       const x = point.x * width;
       const y = point.y * height;
-      ctx.beginPath();
+      ctx.moveTo(x + 4, y);
       ctx.arc(x, y, 4, 0, 2 * Math.PI);
-      ctx.fillStyle = '#10B981';
-      ctx.fill();
     }
+    ctx.fill();
   }
 
   /**

@@ -19,6 +19,10 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
   const streamRef = useRef(null);
   const facingModeRef = useRef('user');
   const formQualityTicksRef = useRef([]);
+  const lastDetectionTimeRef = useRef(0);
+  const statsRef = useRef(null);
+  const fpsRef = useRef(null);
+  const bodyDetectedRef = useRef(false);
 
   // State
   const [status, setStatus] = useState('initializing'); // initializing | loading-model | ready | error
@@ -44,7 +48,11 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
       angle: null,
     };
   });
-  const [fps, setFps] = useState(0);
+
+  // Sync stats ref with latest state for callback stability
+  useEffect(() => {
+    statsRef.current = stats;
+  }, [stats]);
   const [bodyDetected, setBodyDetected] = useState(false);
   const [facingMode, setFacingMode] = useState('user');
   const [torchOn, setTorchOn] = useState(false);
@@ -72,8 +80,8 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
         setStatus('initializing');
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
+            width: { ideal: 640 },
+            height: { ideal: 480 },
             facingMode: facingModeRef.current,
           },
           audio: false,
@@ -170,11 +178,16 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
         return;
       }
 
-      canvas.width = w;
-      canvas.height = h;
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
 
       if (isSimulatingRef.current) {
-        setBodyDetected(true);
+        if (!bodyDetectedRef.current) {
+          bodyDetectedRef.current = true;
+          setBodyDetected(true);
+        }
         const timestamp = performance.now();
         // Simulate a smooth rep cycle: a sine wave oscillating between 35° and 165°
         // Cycle time: 4.5 seconds per rep (frequency = 2 * PI / 4500)
@@ -252,11 +265,13 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
           }));
         }
 
-        // FPS calculation
+        // FPS calculation (direct DOM update to avoid React re-renders)
         frameCount++;
         const now = performance.now();
         if (now - lastFpsUpdate >= 1000) {
-          setFps(frameCount);
+          if (fpsRef.current) {
+            fpsRef.current.textContent = frameCount;
+          }
           frameCount = 0;
           lastFpsUpdate = now;
         }
@@ -276,18 +291,30 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
         ctx.drawImage(video, 0, 0, w, h);
       }
 
-      // Run pose detection
-      const timestamp = performance.now();
-      const landmarks = detector.detect(video, timestamp);
+      // Run pose detection (throttled to max 30 FPS to avoid lagging main thread)
+      const nowTime = performance.now();
+      const shouldDetect = nowTime - lastDetectionTimeRef.current >= 33;
+      
+      let landmarks = detector.landmarks;
+
+      if (shouldDetect) {
+        const detected = detector.detect(video, nowTime);
+        lastDetectionTimeRef.current = nowTime;
+        if (detected) {
+          landmarks = detected;
+          // Mirror landmarks coordinates if front camera (only on new detection)
+          if (facingModeRef.current === 'user') {
+            landmarks.forEach(pt => {
+              pt.x = 1 - pt.x;
+            });
+          }
+        }
+      }
 
       if (landmarks && landmarks.length > 0) {
-        setBodyDetected(true);
-
-        // Mirror landmarks coordinates if front camera
-        if (facingModeRef.current === 'user') {
-          detector.landmarks.forEach(pt => {
-            pt.x = 1 - pt.x;
-          });
+        if (!bodyDetectedRef.current) {
+          bodyDetectedRef.current = true;
+          setBodyDetected(true);
         }
 
         // Draw skeleton
@@ -362,43 +389,54 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
             const angleLeft = leftResult ? leftResult.angle : null;
             const angleRight = altResult ? altResult.angle : null;
 
-            // Update exercise engine
-            const result = engine.update(angleLeft, angleRight);
-            setStats(result);
+            // Only run engine update and state update on new detection frame
+            if (shouldDetect) {
+              const result = engine.update(angleLeft, angleRight);
+              setStats(result);
 
-            // Record form quality tick
-            if (result.feedback && result.feedback !== 'NO BODY DETECTED' && result.feedback !== 'Pick an exercise to start tracking') {
-              const isWarning = result.color === '#F59E0B' || result.color === '#f59e0b' ||
-                                result.feedback === 'LOWER!' || result.feedback === 'CURL MORE!' ||
-                                result.feedback === 'GO LOWER!' || result.feedback === 'EXTEND FULLY!';
-              const score = isWarning ? 70 : 100;
-              formQualityTicksRef.current.push(score);
+              // Record form quality tick
+              if (result.feedback && result.feedback !== 'NO BODY DETECTED' && result.feedback !== 'Pick an exercise to start tracking') {
+                const isWarning = result.color === '#F59E0B' || result.color === '#f59e0b' ||
+                                  result.feedback === 'LOWER!' || result.feedback === 'CURL MORE!' ||
+                                  result.feedback === 'GO LOWER!' || result.feedback === 'EXTEND FULLY!';
+                const score = isWarning ? 70 : 100;
+                formQualityTicksRef.current.push(score);
+              }
             }
           }
         } else {
           // No exercise selected — just show skeleton
-          setStats((prev) => ({
-            ...prev,
-            name: 'SELECT EXERCISE',
-            feedback: 'Pick an exercise to start tracking',
-            color: '#00df89',
-          }));
+          if (shouldDetect) {
+            setStats((prev) => ({
+              ...prev,
+              name: 'SELECT EXERCISE',
+              feedback: 'Pick an exercise to start tracking',
+              color: '#00df89',
+            }));
+          }
         }
       } else {
-        setBodyDetected(false);
-        setStats((prev) => ({
-          ...prev,
-          feedback: 'NO BODY DETECTED',
-          color: '#f43f5e',
-          angle: null,
-        }));
+        if (bodyDetectedRef.current) {
+          bodyDetectedRef.current = false;
+          setBodyDetected(false);
+        }
+        if (shouldDetect) {
+          setStats((prev) => ({
+            ...prev,
+            feedback: 'NO BODY DETECTED',
+            color: '#f43f5e',
+            angle: null,
+          }));
+        }
       }
 
-      // FPS calculation
+      // FPS calculation (direct DOM update to avoid React re-renders)
       frameCount++;
       const now = performance.now();
       if (now - lastFpsUpdate >= 1000) {
-        setFps(frameCount);
+        if (fpsRef.current) {
+          fpsRef.current.textContent = frameCount;
+        }
         frameCount = 0;
         lastFpsUpdate = now;
       }
@@ -461,9 +499,10 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
 
   const handleExerciseSwitch = useCallback((key) => {
     if (engineRef.current) {
+      const currentStats = statsRef.current;
       // Save running set before switching
-      if (stats.counter > 0 && stats.name !== 'SELECT EXERCISE') {
-        saveCompletedSet(stats.name, stats.counter);
+      if (currentStats.counter > 0 && currentStats.name !== 'SELECT EXERCISE') {
+        saveCompletedSet(currentStats.name, currentStats.counter);
       }
       
       engineRef.current.switchExercise(key);
@@ -479,11 +518,12 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
       });
       celebratedForSet.current = false;
     }
-  }, [stats.counter, stats.name, saveCompletedSet]);
+  }, [saveCompletedSet]);
 
   const handleDeselect = useCallback(() => {
-    if (stats.counter > 0 && stats.name !== 'SELECT EXERCISE') {
-      saveCompletedSet(stats.name, stats.counter);
+    const currentStats = statsRef.current;
+    if (currentStats.counter > 0 && currentStats.name !== 'SELECT EXERCISE') {
+      saveCompletedSet(currentStats.name, currentStats.counter);
     }
 
     if (engineRef.current) {
@@ -500,11 +540,12 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
       angle: null,
     });
     celebratedForSet.current = false;
-  }, [stats.counter, stats.name, saveCompletedSet]);
+  }, [saveCompletedSet]);
 
   const handleReset = useCallback(() => {
-    if (stats.counter > 0 && stats.name !== 'SELECT EXERCISE') {
-      saveCompletedSet(stats.name, stats.counter);
+    const currentStats = statsRef.current;
+    if (currentStats.counter > 0 && currentStats.name !== 'SELECT EXERCISE') {
+      saveCompletedSet(currentStats.name, currentStats.counter);
     }
 
     if (engineRef.current) {
@@ -518,12 +559,13 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
       }));
       celebratedForSet.current = false;
     }
-  }, [stats.counter, stats.name, saveCompletedSet]);
+  }, [saveCompletedSet]);
 
   const handleBack = useCallback(() => {
     isSimulatingRef.current = false;
-    if (stats.counter > 0 && stats.name !== 'SELECT EXERCISE') {
-      saveCompletedSet(stats.name, stats.counter);
+    const currentStats = statsRef.current;
+    if (currentStats.counter > 0 && currentStats.name !== 'SELECT EXERCISE') {
+      saveCompletedSet(currentStats.name, currentStats.counter);
     }
 
     if (animFrameRef.current) {
@@ -536,16 +578,18 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
       streamRef.current.getTracks().forEach((t) => t.stop());
     }
     onBack();
-  }, [stats.counter, stats.name, saveCompletedSet, onBack]);
+  }, [saveCompletedSet, onBack]);
 
   const toggleSimulation = useCallback(() => {
     setIsSimulating(prev => {
       const next = !prev;
       isSimulatingRef.current = next;
       if (next) {
+        bodyDetectedRef.current = true;
         setBodyDetected(true);
         setStatus('ready');
       } else {
+        bodyDetectedRef.current = false;
         setBodyDetected(false);
       }
       return next;
@@ -566,8 +610,8 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
+          width: { ideal: 640 },
+          height: { ideal: 480 },
           facingMode: newMode,
         },
         audio: false,
@@ -662,7 +706,7 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
             <RefreshCw size={16} />
           </button>
           <div className="workout__fps">
-            FPS: <span className="workout__fps-value">{fps}</span>
+            FPS: <span ref={fpsRef} className="workout__fps-value">0</span>
           </div>
         </div>
       </header>
