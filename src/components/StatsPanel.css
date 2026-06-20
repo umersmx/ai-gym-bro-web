@@ -1,5 +1,5 @@
 /* ============================================
-   Stats Panel - Cyber Dark Theme
+   Stats Panel - Cyber Dark Theme + Motion
    ============================================ */
 
 .stats-panel {
@@ -13,6 +13,18 @@
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: var(--shadow-soft);
+  animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Header */
@@ -42,13 +54,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition-fast);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .stats-panel__reset:hover {
   background: rgba(244, 63, 94, 0.08);
   border-color: var(--red);
   color: var(--red);
+  transform: rotate(-180deg);
 }
 
 /* Counter LCD Box */
@@ -59,6 +72,24 @@
   border: 1px solid rgba(0, 223, 137, 0.25);
   border-radius: var(--radius-md);
   box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.4), 0 0 16px rgba(0, 223, 137, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Scan line effect on counter */
+.stats-panel__counter-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 223, 137, 0.02) 50%,
+    transparent 100%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .stats-panel__counter-label {
@@ -76,10 +107,27 @@
   font-size: 4.8rem;
   font-weight: 900;
   color: var(--green-500);
-  text-shadow: 0 0 20px rgba(0, 223, 137, 0.5);
+  text-shadow: 0 0 20px rgba(0, 223, 137, 0.5), 0 0 40px rgba(0, 223, 137, 0.2);
   line-height: 1;
   display: block;
-  animation: counterPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: counterPopEnhanced 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes counterPopEnhanced {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+    text-shadow: 0 0 10px rgba(0, 223, 137, 0.3);
+  }
+  50% {
+    transform: scale(1.18);
+    text-shadow: 0 0 30px rgba(0, 223, 137, 0.7), 0 0 60px rgba(0, 223, 137, 0.3);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    text-shadow: 0 0 20px rgba(0, 223, 137, 0.5), 0 0 40px rgba(0, 223, 137, 0.2);
+  }
 }
 
 /* Phase Pill */
@@ -91,22 +139,24 @@
   border-radius: var(--radius-sm);
   background: rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.03);
+  transition: border-color 0.3s ease, background 0.3s ease;
 }
 
 .stats-panel__phase-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  transition: all 0.4s ease;
 }
 
 .stats-panel__phase-dot--up {
   background: var(--green-500);
-  box-shadow: 0 0 8px var(--green-500);
+  box-shadow: 0 0 8px var(--green-500), 0 0 16px rgba(0, 223, 137, 0.3);
 }
 
 .stats-panel__phase-dot--down {
   background: var(--orange);
-  box-shadow: 0 0 8px var(--orange);
+  box-shadow: 0 0 8px var(--orange), 0 0 16px rgba(245, 158, 11, 0.3);
 }
 
 .stats-panel__phase-label {
@@ -121,6 +171,7 @@
   font-size: 0.85rem;
   font-weight: 800;
   flex: 1;
+  transition: color 0.3s ease;
 }
 
 .stats-panel__phase-value--up {
@@ -154,15 +205,17 @@
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--green-400);
+  transition: color 0.3s ease;
 }
 
-/* Feedback */
+/* Feedback — typing cursor blink */
 .stats-panel__feedback-wrap {
   padding: 14px;
   border-radius: var(--radius-sm);
   background: rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.03);
   text-align: center;
+  transition: border-color 0.3s ease;
 }
 
 .stats-panel__feedback-label {
@@ -179,7 +232,11 @@
   font-size: 1.05rem;
   font-weight: 700;
   min-height: 1.4em;
-  transition: color var(--transition-fast);
+  transition: color 0.3s ease;
+  border-right: 2px solid transparent;
+  animation: typingCursor 1.2s step-end infinite;
+  display: inline-block;
+  padding-right: 4px;
 }
 
 /* Mobile: ultra-compact stats panel */
@@ -190,6 +247,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
+    animation: none;
   }
 
   .stats-panel__header {
@@ -276,6 +334,7 @@
     background: transparent;
     border: none;
     box-shadow: none;
+    animation: none;
   }
 
   .stats-panel__header {
@@ -403,4 +462,122 @@
   .stats-panel__angle-wrap {
     display: none;
   }
+}
+
+/* ============================================
+   Target Stepper & Circular Progress Ring (Premium UX)
+   ============================================ */
+
+/* Target Goal Stepper */
+.stats-panel__target-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.stats-panel__target-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.stats-panel__target-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.stats-panel__target-btn {
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 32px;
+}
+
+.stats-panel__target-btn:hover:not(:disabled) {
+  background: rgba(0, 223, 137, 0.12);
+  border-color: rgba(0, 223, 137, 0.4);
+  color: #ffffff;
+}
+
+.stats-panel__target-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.stats-panel__target-val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Circular Progress Ring overlay on Counter */
+.stats-panel__counter-wrap {
+  padding: 16px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.stats-panel__progress-svg {
+  width: 155px;
+  height: 155px;
+  transform: rotate(-90deg); /* Start progress at 12 o'clock */
+  position: absolute;
+  z-index: 1;
+}
+
+.stats-panel__progress-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.03);
+  stroke-width: 7;
+}
+
+.stats-panel__progress-bar {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stats-panel__counter-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats-panel__counter {
+  font-size: 4.2rem !important; /* Slightly smaller to fit nicely in 140px diameter circle */
+  margin-top: -2px;
+  margin-bottom: -2px;
+}
+
+.stats-panel__counter-target-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 4px;
 }

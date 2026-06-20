@@ -5,6 +5,7 @@ import { ExerciseDetector, EXERCISE_MAP } from '../lib/exercises';
 import { calculateAngle } from '../lib/utils';
 import ExerciseSelector from './ExerciseSelector';
 import StatsPanel from './StatsPanel';
+import ConfettiCanvas from './ConfettiCanvas';
 import './WorkoutSession.css';
 
 function WorkoutSession({ initialExerciseKey = null, onBack }) {
@@ -16,6 +17,7 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
   const animFrameRef = useRef(null);
   const streamRef = useRef(null);
   const facingModeRef = useRef('user');
+  const formQualityTicksRef = useRef([]);
 
   // State
   const [status, setStatus] = useState('initializing'); // initializing | loading-model | ready | error
@@ -45,6 +47,17 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
   const [bodyDetected, setBodyDetected] = useState(false);
   const [facingMode, setFacingMode] = useState('user');
   const [torchOn, setTorchOn] = useState(false);
+  const [targetGoal, setTargetGoal] = useState(10); // default goal: 10 reps
+  const [celebrating, setCelebrating] = useState(false);
+  const celebratedForSet = useRef(false);
+
+  // Trigger celebration on matching target goal
+  useEffect(() => {
+    if (targetGoal > 0 && stats.counter >= targetGoal && !celebratedForSet.current) {
+      celebratedForSet.current = true;
+      setCelebrating(true);
+    }
+  }, [stats.counter, targetGoal]);
 
   // Initialize camera and pose detector
   useEffect(() => {
@@ -257,6 +270,15 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
             // Update exercise engine
             const result = engine.update(angleLeft, angleRight);
             setStats(result);
+
+            // Record form quality tick
+            if (result.feedback && result.feedback !== 'NO BODY DETECTED' && result.feedback !== 'Pick an exercise to start tracking') {
+              const isWarning = result.color === '#F59E0B' || result.color === '#f59e0b' ||
+                                result.feedback === 'LOWER!' || result.feedback === 'CURL MORE!' ||
+                                result.feedback === 'GO LOWER!' || result.feedback === 'EXTEND FULLY!';
+              const score = isWarning ? 70 : 100;
+              formQualityTicksRef.current.push(score);
+            }
           }
         } else {
           // No exercise selected — just show skeleton
@@ -317,8 +339,38 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
+  const saveCompletedSet = useCallback((exerciseName, reps) => {
+    if (reps <= 0 || exerciseName === 'SELECT EXERCISE') return;
+    try {
+      const history = JSON.parse(localStorage.getItem('gym-bro-history') || '[]');
+      
+      const ticks = formQualityTicksRef.current;
+      const avgScore = ticks.length > 0
+        ? Math.round(ticks.reduce((sum, val) => sum + val, 0) / ticks.length)
+        : 100;
+
+      const newSet = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        exercise: exerciseName,
+        reps: reps,
+        formScore: avgScore,
+      };
+      localStorage.setItem('gym-bro-history', JSON.stringify([...history, newSet]));
+    } catch (e) {
+      console.warn('Failed to save set in localStorage:', e);
+    } finally {
+      formQualityTicksRef.current = []; // Always reset ticks ref
+    }
+  }, []);
+
   const handleExerciseSwitch = useCallback((key) => {
     if (engineRef.current) {
+      // Save running set before switching
+      if (stats.counter > 0 && stats.name !== 'SELECT EXERCISE') {
+        saveCompletedSet(stats.name, stats.counter);
+      }
+      
       engineRef.current.switchExercise(key);
       setCurrentKey(key);
       const ex = engineRef.current.currentExercise;
@@ -330,10 +382,15 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
         color: '#00df89',
         angle: null,
       });
+      celebratedForSet.current = false;
     }
-  }, []);
+  }, [stats.counter, stats.name, saveCompletedSet]);
 
   const handleDeselect = useCallback(() => {
+    if (stats.counter > 0 && stats.name !== 'SELECT EXERCISE') {
+      saveCompletedSet(stats.name, stats.counter);
+    }
+
     if (engineRef.current) {
       engineRef.current.currentKey = null;
       engineRef.current.currentExercise = null;
@@ -347,9 +404,14 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
       color: '#00df89',
       angle: null,
     });
-  }, []);
+    celebratedForSet.current = false;
+  }, [stats.counter, stats.name, saveCompletedSet]);
 
   const handleReset = useCallback(() => {
+    if (stats.counter > 0 && stats.name !== 'SELECT EXERCISE') {
+      saveCompletedSet(stats.name, stats.counter);
+    }
+
     if (engineRef.current) {
       engineRef.current.reset();
       setStats((prev) => ({
@@ -359,10 +421,15 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
         feedback: '',
         color: '#00df89',
       }));
+      celebratedForSet.current = false;
     }
-  }, []);
+  }, [stats.counter, stats.name, saveCompletedSet]);
 
   const handleBack = useCallback(() => {
+    if (stats.counter > 0 && stats.name !== 'SELECT EXERCISE') {
+      saveCompletedSet(stats.name, stats.counter);
+    }
+
     if (animFrameRef.current) {
       cancelAnimationFrame(animFrameRef.current);
     }
@@ -373,7 +440,7 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
       streamRef.current.getTracks().forEach((t) => t.stop());
     }
     onBack();
-  }, [onBack]);
+  }, [stats.counter, stats.name, saveCompletedSet, onBack]);
 
   const handleFlipCamera = useCallback(async () => {
     const newMode = facingModeRef.current === 'user' ? 'environment' : 'user';
@@ -535,16 +602,35 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
                 <span className="workout__mobile-exercise-name">
                   {currentKey ? EXERCISE_MAP[currentKey]?.name.toUpperCase() : 'SELECT EXERCISE'}
                 </span>
-                <button className="workout__mobile-reset-btn" onClick={handleReset} title="Reset Counter" id="mobile-reset-btn">
-                  <RefreshCw size={16} />
-                </button>
+                <div className="workout__mobile-header-actions">
+                  <div className="workout__mobile-target-controls">
+                    <button className="workout__mobile-target-btn" onClick={() => setTargetGoal(prev => Math.max(0, prev - 1))} disabled={targetGoal <= 0}>-</button>
+                    <span className="workout__mobile-target-val">{targetGoal === 0 ? 'GOAL: NONE' : `GOAL: ${targetGoal}`}</span>
+                    <button className="workout__mobile-target-btn" onClick={() => setTargetGoal(prev => (prev === 0 ? 5 : prev + 1))}>+</button>
+                  </div>
+                  <button className="workout__mobile-reset-btn" onClick={handleReset} title="Reset Counter" id="mobile-reset-btn">
+                    <RefreshCw size={16} />
+                  </button>
+                </div>
               </div>
               <div className="workout__mobile-counter-body">
                 <span className="workout__mobile-counter-val" key={stats.counter}>
                   {stats.counter}
                 </span>
-                <span className="workout__mobile-counter-label">REPS</span>
+                <span className="workout__mobile-counter-label">REPS {targetGoal > 0 ? `/ ${targetGoal}` : ''}</span>
               </div>
+              {targetGoal > 0 && (
+                <div className="workout__mobile-progress-bar-wrap">
+                  <div 
+                    className="workout__mobile-progress-bar-fill" 
+                    style={{ 
+                      width: `${Math.min((stats.counter / targetGoal) * 100, 100)}%`,
+                      backgroundColor: stats.color || 'var(--green-500)',
+                      boxShadow: `0 0 8px ${stats.color || 'var(--green-500)'}50`
+                    }} 
+                  />
+                </div>
+              )}
             </div>
 
             {/* Comments (Form Feedback) */}
@@ -577,9 +663,15 @@ function WorkoutSession({ initialExerciseKey = null, onBack }) {
             color={stats.color}
             angle={stats.angle}
             onReset={handleReset}
+            targetGoal={targetGoal}
+            setTargetGoal={setTargetGoal}
           />
         </aside>
       </div>
+
+      {celebrating && (
+        <ConfettiCanvas onComplete={() => setCelebrating(false)} />
+      )}
     </div>
   );
 }

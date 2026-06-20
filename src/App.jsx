@@ -1,49 +1,87 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import LandingPage from './components/LandingPage';
 import WorkoutSession from './components/WorkoutSession';
 import VisitsPage from './components/VisitsPage';
+import HistoryPage from './components/HistoryPage';
+import SparkleBackground from './components/SparkleBackground';
 import './App.css';
 
 function App() {
   const [page, setPage] = useState(() => {
-    // Check for secret /visits route on initial load
     const hash = window.location.hash.replace('#', '');
     const path = window.location.pathname.replace(/\/$/, '');
     if (hash === 'visits' || path === '/visits') return 'visits';
     return 'landing';
   });
   const [selectedExerciseKey, setSelectedExerciseKey] = useState(null);
+  const [transitioning, setTransitioning] = useState(false);
+  const [displayPage, setDisplayPage] = useState(page);
+  const pageRef = useRef(null);
 
   // Listen for hash changes
   useEffect(() => {
     function onHashChange() {
       const hash = window.location.hash.replace('#', '');
-      if (hash === 'visits') setPage('visits');
+      if (hash === 'visits') navigateTo('visits');
     }
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
+  // Smooth page transition helper
+  const navigateTo = useCallback((nextPage, exerciseKey = null) => {
+    if (transitioning) return;
+    setTransitioning(true);
+
+    // Start exit animation
+    setTimeout(() => {
+      if (exerciseKey !== undefined) {
+        setSelectedExerciseKey(exerciseKey);
+      }
+      setPage(nextPage);
+      setDisplayPage(nextPage);
+      setTransitioning(false);
+    }, 250);
+  }, [transitioning]);
+
   const goToLanding = () => {
     window.location.hash = '';
-    setSelectedExerciseKey(null);
-    setPage('landing');
+    navigateTo('landing', null);
   };
 
   const startWorkout = (exerciseKey = null) => {
-    setSelectedExerciseKey(exerciseKey);
-    setPage('workout');
+    navigateTo('workout', exerciseKey);
   };
 
   return (
     <div className="app">
-      {page === 'visits' ? (
-        <VisitsPage onBack={goToLanding} />
-      ) : page === 'workout' ? (
-        <WorkoutSession initialExerciseKey={selectedExerciseKey} onBack={goToLanding} />
-      ) : (
-        <LandingPage onStart={startWorkout} />
-      )}
+      {/* Sparkle Particle Background */}
+      <SparkleBackground sparkleCount={65} />
+
+      {/* Floating Orb Background */}
+      <div className="app__orbs" aria-hidden="true">
+        <div className="app__orb app__orb--1" />
+        <div className="app__orb app__orb--2" />
+        <div className="app__orb app__orb--3" />
+        <div className="app__orb app__orb--4" />
+      </div>
+
+      {/* Page Content with Transitions */}
+      <div
+        ref={pageRef}
+        className={`app__page ${transitioning ? 'app__page--exit' : ''}`}
+        key={displayPage}
+      >
+        {displayPage === 'visits' ? (
+          <VisitsPage onBack={goToLanding} />
+        ) : displayPage === 'workout' ? (
+          <WorkoutSession initialExerciseKey={selectedExerciseKey} onBack={goToLanding} />
+        ) : displayPage === 'history' ? (
+          <HistoryPage onBack={goToLanding} />
+        ) : (
+          <LandingPage onStart={startWorkout} onNavigate={navigateTo} />
+        )}
+      </div>
     </div>
   );
 }

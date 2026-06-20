@@ -1,5 +1,5 @@
 /* ============================================
-   Exercise Selector - Cyber Dark Theme
+   Exercise Selector - Cyber Dark Theme + Motion
    ============================================ */
 
 .exercise-selector {
@@ -36,15 +36,37 @@
   -webkit-backdrop-filter: blur(8px);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: 'Inter', sans-serif;
   font-size: 0.88rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Slide-in highlight from left on hover */
+.exercise-selector__btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--green-500);
+  transform: scaleY(0);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 12px rgba(0, 223, 137, 0.4);
 }
 
 .exercise-selector__btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--green-500);
+  background: rgba(0, 223, 137, 0.05);
+  border-color: rgba(0, 223, 137, 0.2);
   color: #ffffff;
+  transform: translateX(4px);
+}
+
+.exercise-selector__btn:hover::before {
+  transform: scaleY(1);
 }
 
 .exercise-selector__btn--active {
@@ -52,10 +74,31 @@
   border-color: var(--green-500);
   color: #ffffff;
   box-shadow: 0 0 16px rgba(0, 223, 137, 0.15), inset 0 0 10px rgba(0, 223, 137, 0.05);
+  animation: activeGlow 2.5s ease-in-out infinite;
+}
+
+.exercise-selector__btn--active::before {
+  transform: scaleY(1);
+}
+
+@keyframes activeGlow {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(0, 223, 137, 0.15), inset 0 0 10px rgba(0, 223, 137, 0.05);
+    border-color: rgba(0, 223, 137, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(0, 223, 137, 0.25), inset 0 0 15px rgba(0, 223, 137, 0.08);
+    border-color: rgba(0, 223, 137, 0.8);
+  }
 }
 
 .exercise-selector__icon {
   font-size: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.exercise-selector__btn:hover .exercise-selector__icon {
+  transform: scale(1.15);
 }
 
 .exercise-selector__name {
@@ -72,6 +115,12 @@
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.25);
   color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.exercise-selector__btn:hover .exercise-selector__key {
+  background: rgba(0, 223, 137, 0.1);
+  color: var(--green-400);
 }
 
 .exercise-selector__btn--active .exercise-selector__key {
@@ -79,16 +128,23 @@
   color: var(--green-500);
 }
 
+/* Deselect button */
 .exercise-selector__btn--deselect {
   border-color: rgba(244, 63, 94, 0.15);
   background: rgba(244, 63, 94, 0.02);
   color: var(--text-muted);
 }
 
+.exercise-selector__btn--deselect::before {
+  background: var(--red);
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+}
+
 .exercise-selector__btn--deselect:hover {
   background: rgba(244, 63, 94, 0.08);
   border-color: var(--red);
   color: var(--red);
+  transform: translateX(4px);
 }
 
 /* Mobile: horizontal exercise buttons */
@@ -109,6 +165,14 @@
     text-align: center;
     gap: 5px;
     min-width: 0;
+  }
+
+  .exercise-selector__btn::before {
+    display: none;
+  }
+
+  .exercise-selector__btn:hover {
+    transform: translateY(-2px);
   }
 
   .exercise-selector__btn--deselect {
