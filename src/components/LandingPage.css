@@ -203,7 +203,7 @@
 /* ============ HERO SECTION ============ */
 .landing__hero {
   position: relative;
-  padding: 100px 20px 80px;
+  padding: 160px 20px 80px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -302,7 +302,10 @@
 
 /* CTA Button Wrapper - Floating Parallax Overlay */
 .landing__cta-wrap {
-  display: inline-block;
+  display: inline-flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 48px;
   animation: floatCTA 3.5s ease-in-out infinite;
   will-change: transform;
@@ -408,7 +411,6 @@
   box-shadow: 
     0 6px 0 rgba(255, 255, 255, 0.05), 
     0 12px 24px rgba(0, 0, 0, 0.2);
-  margin-left: 16px;
 }
 
 .landing__cta--secondary::before {
@@ -1034,7 +1036,23 @@
   }
 
   .landing__hero {
-    padding: 60px 16px;
+    padding: 110px 16px 60px;
+  }
+
+  .landing__cta-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 40px;
+  }
+
+  .landing__cta {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 0.95rem;
+    justify-content: center;
   }
 
   .landing__title {
