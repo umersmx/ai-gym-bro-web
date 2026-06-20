@@ -156,7 +156,7 @@ function LandingPage({ onStart, onNavigate }) {
     <div className="landing">
       {/* Navigation */}
       <header className={`landing__header ${headerScrolled ? 'landing__header--scrolled' : ''}`}>
-        <div className="landing__logo">
+        <div className="landing__logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <div className="landing__logo-icon">
             <Dumbbell size={20} />
           </div>

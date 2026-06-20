@@ -11,33 +11,49 @@
 
 /* ============ HEADER / NAV ============ */
 .landing__header {
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: 20px;
+  left: 0;
+  right: 0;
   z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 40px;
-  background: rgba(9, 13, 22, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  transition: background 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  padding: 0 40px;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: none;
+  pointer-events: none; /* Let clicks pass through empty space */
+  transition: top 0.3s ease, padding 0.3s ease;
 }
 
-/* Header becomes more solid on scroll */
+/* Header floats closer to top on scroll */
 .landing__header--scrolled {
-  background: rgba(9, 13, 22, 0.92);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  top: 12px;
 }
 
 .landing__logo {
   display: flex;
   align-items: center;
   gap: 10px;
+  background: rgba(9, 13, 22, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-full);
+  padding: 10px 24px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.landing__logo:hover {
+  background: rgba(9, 13, 22, 0.7);
+  border-color: rgba(0, 223, 137, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 223, 137, 0.15);
+  transform: translateY(-2px);
 }
 
 .landing__logo-icon {
@@ -74,7 +90,23 @@
 .landing__nav {
   display: flex;
   align-items: center;
-  gap: 36px;
+  gap: 28px;
+  background: rgba(9, 13, 22, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-full);
+  padding: 10px 32px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  pointer-events: auto;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.landing__nav:hover {
+  background: rgba(9, 13, 22, 0.7);
+  border-color: rgba(0, 223, 137, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 223, 137, 0.1);
+  transform: translateY(-2px);
 }
 
 .landing__nav-link {
@@ -111,15 +143,19 @@
 
 .landing__signup-btn {
   padding: 10px 24px;
-  border: 1px solid rgba(0, 223, 137, 0.25);
+  border: 1px solid rgba(0, 223, 137, 0.3);
   border-radius: var(--radius-full);
-  background: rgba(0, 223, 137, 0.05);
+  background: rgba(0, 223, 137, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   color: var(--green-500);
   font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 10px rgba(0, 223, 137, 0.05);
+  pointer-events: auto;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   position: relative;
   overflow: hidden;
 }
@@ -128,20 +164,40 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(0, 223, 137, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(0, 223, 137, 0.15), transparent);
   transform: translateX(-100%);
   transition: transform 0.5s ease;
 }
 
 .landing__signup-btn:hover {
-  background: rgba(0, 223, 137, 0.12);
-  border-color: rgba(0, 223, 137, 0.5);
+  background: rgba(0, 223, 137, 0.18);
+  border-color: var(--green-500);
   color: #ffffff;
-  box-shadow: 0 0 20px rgba(0, 223, 137, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 223, 137, 0.2), 0 0 20px rgba(0, 223, 137, 0.3);
+  transform: translateY(-2px);
 }
 
 .landing__signup-btn:hover::before {
   transform: translateX(100%);
+}
+
+.landing__signup-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 4px 16px rgba(0, 223, 137, 0.15);
+}
+
+/* Scrolled states for capsule styling */
+.landing__header--scrolled .landing__logo,
+.landing__header--scrolled .landing__nav {
+  background: rgba(9, 13, 22, 0.85);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+.landing__header--scrolled .landing__signup-btn {
+  background: rgba(0, 223, 137, 0.12);
+  border-color: rgba(0, 223, 137, 0.45);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 223, 137, 0.15);
 }
 
 /* ============ HERO SECTION ============ */
@@ -950,7 +1006,27 @@
 
 @media (max-width: 640px) {
   .landing__header {
-    padding: 14px 20px;
+    top: 10px;
+    padding: 0 12px;
+  }
+
+  .landing__logo {
+    padding: 8px 16px;
+    gap: 8px;
+  }
+
+  .landing__logo-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .landing__logo-text {
+    font-size: 1.1rem;
+  }
+
+  .landing__signup-btn {
+    padding: 8px 16px;
+    font-size: 0.82rem;
   }
 
   .landing__nav {
