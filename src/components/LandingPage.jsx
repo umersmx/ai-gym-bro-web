@@ -27,10 +27,10 @@ const FEATURES = [
 ];
 
 const EXERCISES = [
-  { key: '1', name: 'Squat', icon: '🏋️', color: '#00df89', image: '/images/squat-transparent.png' },
-  { key: '2', name: 'Bicep Curl', icon: '💪', color: '#34d399', image: '/images/bicep-curl-transparent.png' },
-  { key: '3', name: 'Push-Up', icon: '🫸', color: '#059669', image: '/images/pushup-transparent.png' },
-  { key: '4', name: 'Shoulder Press', icon: '🙌', color: '#00df89', image: '/images/shoulder-press-transparent.png' },
+  { key: '1', name: 'Squat', icon: '🏋️', color: '#00df89', image: '/images/squat.svg' },
+  { key: '2', name: 'Bicep Curl', icon: '💪', color: '#34d399', image: '/images/bicep-curl.svg' },
+  { key: '3', name: 'Push-Up', icon: '🫸', color: '#059669', image: '/images/pushup.svg' },
+  { key: '4', name: 'Shoulder Press', icon: '🙌', color: '#00df89', image: '/images/shoulder-press.svg' },
 ];
 
 const HERO_BADGES = [
